@@ -1,6 +1,6 @@
 """Rutas del proyecto: la unica fuente de verdad.
 
-    calculo-diario-app/        RAIZ (el repo; git trabaja aqui)
+    calculus-daily/        RAIZ (el repo; git trabaja aqui)
     ├── Practicar.bat
     ├── otras-opciones/        los demas .bat
     ├── usuario/               USUARIO: lo del usuario (diario, datos, revisiones...)
