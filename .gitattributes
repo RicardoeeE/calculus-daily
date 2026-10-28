@@ -1,0 +1,14 @@
+* text=auto eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.png binary
+*.gif binary
+*.woff2 binary
+# Registro y diario solo se amplian: si dos equipos practican el mismo dia,
+# git junta las dos versiones en vez de dejar marcas de conflicto.
+usuario/datos/registro.jsonl merge=union
+usuario/diario.md merge=union
+usuario/datos/notas.jsonl merge=union
+usuario/datos/progreso.jsonl merge=union
+usuario/revisiones/*.md merge=union
+usuario/simulacros/*.md merge=union

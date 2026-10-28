@@ -1,0 +1,138 @@
+# Integrales que salen al resolver EDOs (separables, lineales, homogeneas,
+# exactas). La variable se escribe siempre como x.
+
+[[ficha]]
+id = "TB-SEP"
+tipo = "integral"
+tecnica = "tabla"
+enunciado = "(x-4)/x^2"
+solucion = "ln|x| + 4/x"
+fuente = "Ejercicio tipo de calculo (EDO separable)"
+pistas = ["Denominador de un solo termino.", "Separa el numerador: cada sumando entre x^2.", "(x-4)/x^2 = 1/x - 4/x^2."]
+
+[[ficha]]
+id = "PA-XEXPMED"
+tipo = "integral"
+tecnica = "partes"
+enunciado = "x e^(x/2)"
+solucion = "(2x-4) e^(x/2)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Polinomio por exponencial.", "Partes: u = x (al derivar desaparece), dv = e^(x/2) dx.", "Con u = x y dv = e^(x/2) dx: du = dx y v = 2e^(x/2). Aplica ∫u dv = u·v - ∫v du."]
+
+[[ficha]]
+id = "PA-CICLICA"
+tipo = "integral"
+tecnica = "partes"
+enunciado = "e^(2x) cos(x)"
+solucion = "e^(2x)(2 cos(x) + sen(x))/5"
+fuente = "Ejercicio tipo de calculo (EDO lineal con forzamiento)"
+pistas = ["Exponencial por coseno: ninguna se simplifica al derivar.", "Partes dos veces; reaparece la integral original (partes ciclica).", "Llama I a la integral, aplica partes dos veces y despeja I."]
+larga = true
+
+[[ficha]]
+id = "PA-XEXPNEG"
+tipo = "integral"
+tecnica = "partes"
+enunciado = "6x e^(-3x)"
+solucion = "-2x e^(-3x) - (2/3) e^(-3x)"
+fuente = "Ejercicio tipo de calculo (factor integrante)"
+pistas = ["Polinomio por exponencial.", "Partes: u = x, dv = e^(-3x) dx; saca el 6 fuera.", "v = -e^(-3x)/3; queda otra exponencial inmediata."]
+
+[[ficha]]
+id = "S-EXPMEDIO"
+tipo = "integral"
+tecnica = "sustitucion"
+previa = "AL-EXP"
+enunciado = "x e^(x^2/2)"
+solucion = "e^(x^2/2)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Exponencial cuyo exponente tiene derivada x.", "u = x^2/2, du = x dx.", "Queda ∫ e^u du."]
+
+[[ficha]]
+id = "S-EXPINV"
+tipo = "integral"
+tecnica = "sustitucion"
+previa = "AL-EXP"
+enunciado = "e^(2/x)/x^2"
+solucion = "-(1/2) e^(2/x)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Exponencial de 2/x y un 1/x^2 fuera.", "u = 2/x, du = -2/x^2 dx.", "Ajusta la constante: 1/x^2 dx = -du/2."]
+
+[[ficha]]
+id = "S-EXPSEN"
+tipo = "integral"
+tecnica = "sustitucion"
+previa = "AL-EXP"
+enunciado = "cos(x) e^(sen(x))"
+solucion = "e^(sen(x))"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Exponencial de sen x por cos x.", "u = sen x, du = cos x dx.", "Queda ∫ e^u du."]
+
+[[ficha]]
+id = "S-EXPNEG"
+tipo = "integral"
+tecnica = "sustitucion"
+previa = "AL-EXP"
+enunciado = "4x e^(-2x^2)"
+solucion = "-e^(-2x^2)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Exponencial de -2x^2 por x.", "u = -2x^2, du = -4x dx.", "4x dx = -du."]
+
+[[ficha]]
+id = "R-LOGIST"
+tipo = "integral"
+tecnica = "racionales"
+previa = "AL-FRAC"
+enunciado = "1/(({a})x - ({b})x^2)"
+solucion = "(ln|x| - ln|({b})x - ({a})|)/({a})"
+params = { a = [1, 2, 3], b = [2, 3, 5] }
+fuente = "Familia propia (ecuacion logistica)"
+pistas = ["Denominador con x comun: x(({a}) - ({b})x).", "Fracciones simples: A/x + B/(({a}) - ({b})x).", "Con x = 0 sale A; la otra constante, con x = ({a})/({b}), donde se anula ({a}) - ({b})x."]
+
+[[ficha]]
+id = "R-XIRRED"
+tipo = "integral"
+tecnica = "racionales"
+enunciado = "(x^2+4)/(x(x^2+1))"
+solucion = "4 ln|x| - (3/2) ln(x^2+1)"
+fuente = "Ejercicio tipo de calculo (EDO homogenea, u = y/x)"
+pistas = ["Denominador factorizado: x por un cuadratico irreducible.", "Fracciones simples: A/x + (Bx+C)/(x^2+1).", "Sale 4/x - 3x/(x^2+1); la segunda es f'/f salvo constante."]
+
+[[ficha]]
+id = "R-TRES"
+tipo = "integral"
+tecnica = "racionales"
+previa = "AL-FRAC"
+enunciado = "(x^2+2)/(x^3-4x)"
+solucion = "(3/4) ln|x^2-4| - (1/2) ln|x|"
+fuente = "Ejercicio tipo de calculo (EDO homogenea, u = y/x)"
+pistas = ["Denominador de grado 3: sacale factor comun.", "x^3 - 4x = x(x-2)(x+2); fracciones simples con tres raices.", "Resulta 3/(4(x-2)) + 3/(4(x+2)) - 1/(2x)."]
+larga = true
+
+[[ficha]]
+id = "LG-CONST"
+tipo = "integral"
+tecnica = "logaritmo"
+enunciado = "(2-4x)/(x^2-x+1)"
+solucion = "-2 ln(x^2-x+1)"
+fuente = "Ejercicio tipo de calculo (EDO homogenea, u = y/x)"
+pistas = ["Compara el numerador con la derivada del denominador.", "La derivada de x^2-x+1 es 2x-1, y 2-4x = -2(2x-1): f'/f con una constante.", "Saca el -2 fuera."]
+
+[[ficha]]
+id = "LG-SEN"
+tipo = "integral"
+tecnica = "logaritmo"
+enunciado = "cos(x)/(sen(x) + 3)"
+solucion = "ln(sen(x) + 3)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Mira la derivada del denominador.", "Es f'/f: el numerador es la derivada de sen x + 3.", "sen x + 3 es siempre positivo: no hacen falta barras."]
+
+[[ficha]]
+id = "TB-DIV"
+tipo = "integral"
+tecnica = "tabla"
+previa = "AL-DIV"
+enunciado = "(4x+1)/(x+2)"
+solucion = "4x - 7 ln|x+2|"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Numerador y denominador del mismo grado.", "Divide: (4x+1) = 4(x+2) - 7.", "Queda 4 - 7/(x+2)."]

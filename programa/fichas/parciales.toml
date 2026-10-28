@@ -1,0 +1,235 @@
+# Derivadas parciales y EDOs exactas. La dificultad tipica no es la teoria
+# sino derivar con dos letras. La escalera va de la regla minima (la otra letra
+# es un numero) hasta la funcion potencial.
+# En las respuestas valen x e y. Exacta: «∂M/∂y, ∂N/∂x» separados por coma.
+
+# ---------- Escalon 1: la otra letra es una constante ----------
+
+[[ficha]]
+id = "PC-CERO"
+tipo = "parcial"
+tecnica = "constante"
+respecto = "y"
+enunciado = "({a})x^3 + ({b})x y"
+params = { a = [2, 5, -3], b = [1, 4, -2] }
+derivados = { d = "2*({b})" }
+fuente = "Familia propia"
+pistas = ["Respecto a y: x es un numero fijo. Imagina x = 2.", "Con x = 2 queda 8·({a}) + ({d})y: el primer termino es un numero, y su derivada es 0.", "Con x = 2, ¿cuanto vale la derivada de ({d})y respecto a y? Despues vuelve a poner x en lugar del 2."]
+
+[[ficha]]
+id = "PC-POLI-X"
+tipo = "parcial"
+tecnica = "constante"
+respecto = "x"
+enunciado = "({a})x^2 y + ({b})x y^3 + ({c})y"
+params = { a = [3, -2, 5], b = [1, 4, -1], c = [2, 7] }
+derivados = { a2 = "2*({a})", b8 = "8*({b})", c2 = "2*({c})" }
+fuente = "Familia propia"
+pistas = ["Respecto a x: y es un numero fijo. Imagina y = 2.", "Con y = 2 queda ({a2})x^2 + ({b8})x + ({c2}): derivalo con una sola letra (el numero suelto da 0).", "Despues de derivar con y = 2, vuelve a poner y donde estaba el 2: ({a2}) era ({a})y y ({b8}) era ({b})y^3."]
+
+[[ficha]]
+id = "PC-POLI-Y"
+tipo = "parcial"
+tecnica = "constante"
+respecto = "y"
+enunciado = "({a})x^2 y + ({b})x y^3 + ({c})x"
+params = { a = [3, -2, 5], b = [1, 4, -1], c = [2, 7] }
+derivados = { a4 = "4*({a})", b2 = "2*({b})", c2 = "2*({c})" }
+fuente = "Familia propia"
+pistas = ["Respecto a y: x es un numero fijo. Imagina x = 2.", "Con x = 2 queda ({a4})y + ({b2})y^3 + ({c2}): derivalo con una sola letra (el numero suelto da 0).", "Despues de derivar con x = 2, vuelve a poner x donde estaba el 2: ({a4}) era ({a})x^2 y ({b2}) era ({b})x."]
+
+[[ficha]]
+id = "PC-POT"
+tipo = "parcial"
+tecnica = "constante"
+respecto = "y"
+enunciado = "x^{m} y^{n}"
+params = { m = [1, 2, 3], n = [2, 3, 4] }
+fuente = "Familia propia"
+pistas = ["x^{m} es un numero que multiplica.", "Pon x = 2: x^{m} vale 2^{m}, un numero. Deriva 2^{m}·y^{n} respecto a y con una sola letra.", "Con x = 2, baja el {n} y resta 1 al exponente de y; despues vuelve a poner x^{m} donde estaba el 2^{m}."]
+
+# ---------- Escalon 2: exponenciales, productos y cadena con dos letras ----------
+
+[[ficha]]
+id = "PP-EXP-MY"
+errores = [{ respuesta = "2x e^(x^2)(2x y + x) + 2x e^(x^2)", mensaje = "Has derivado tambien e^(x^2), pero respecto a y es un numero (no lleva y): solo se deriva el parentesis." }]
+tipo = "parcial"
+tecnica = "parcial_cadena"
+respecto = "y"
+enunciado = "e^(x^2) (2x y + x)"
+fuente = "Ejercicio tipo de calculo (∂M/∂y de una EDO exacta)"
+pistas = ["Respecto a y, e^(x^2) no tiene y: es un numero que multiplica.", "Haz x = 2: queda e^4·(4y + 2). Su derivada respecto a y es 4·e^4. Vuelve a poner x: 4 = 2·2 → 2x, y e^4 = e^(x^2).", "Solo se deriva el parentesis respecto a y: (2x y + x) → 2x."]
+[[ficha]]
+id = "PP-EXP-NX"
+tipo = "parcial"
+tecnica = "parcial_cadena"
+respecto = "x"
+enunciado = "e^(x^2)"
+fuente = "Ejercicio tipo de calculo (∂N/∂x de una EDO exacta)"
+pistas = ["No hay y: es una derivada normal de una variable.", "Cadena: e^(algo) → e^(algo)·(algo)'.", "(x^2)' = 2x."]
+[[ficha]]
+id = "PP-EXY-X"
+tipo = "parcial"
+tecnica = "parcial_cadena"
+respecto = "x"
+enunciado = "e^(({a})x y)"
+params = { a = [1, 2, -1, 3] }
+derivados = { a2 = "2*({a})" }
+fuente = "Familia propia"
+pistas = ["Cadena: e^(algo) por la derivada de algo.", "Pon y = 2: queda e^(({a2})x). Derivala con una sola letra (cadena) y vuelve a poner y donde estaba el 2.", "(({a})x y)' respecto a x = ({a})y."]
+
+[[ficha]]
+id = "PP-EXY-Y"
+tipo = "parcial"
+tecnica = "parcial_cadena"
+respecto = "y"
+enunciado = "x e^(({a})x y)"
+params = { a = [1, 2, -1] }
+derivados = { a2 = "2*({a})" }
+fuente = "Familia propia"
+pistas = ["Respecto a y, la x de delante es un numero que multiplica.", "Pon x = 2: queda 2·e^(({a2})y). Derivala respecto a y con una sola letra (cadena) y vuelve a poner x donde estaba cada 2.", "(({a})x y)' respecto a y = ({a})x; no olvides la x de delante."]
+
+[[ficha]]
+id = "PP-PROD-X"
+requiere = ["comprobar_solucion"]  # antes, derivar productos de una variable
+tipo = "parcial"
+tecnica = "parcial_cadena"
+respecto = "x"
+enunciado = "x^2 e^(x y)"
+fuente = "Ejercicio tipo de calculo (M de una exacta tras el factor integrante)"
+pistas = ["Respecto a x hay producto: x^2 por e^(xy).", "Pon y = 2: queda x^2·e^(2x). Deriva ese producto con una sola letra y vuelve a poner y donde estaba el 2.", "Producto: (x^2)'·e^(xy) + x^2·(e^(xy))'; la derivada de e^(xy) respecto a x lleva la cadena."]
+[[ficha]]
+id = "PP-SENXY"
+tipo = "parcial"
+tecnica = "parcial_cadena"
+respecto = "y"
+enunciado = "sen(({a})x y)"
+params = { a = [1, 2, 3] }
+derivados = { a2 = "2*({a})" }
+fuente = "Familia propia"
+pistas = ["Cadena: sen(algo) → cos(algo)·(algo)'.", "Pon x = 2: queda sen(({a2})y). Derivalo con una sola letra y vuelve a poner x donde estaba el 2.", "Derivada de algo respecto a y: ({a})x."]
+
+[[ficha]]
+id = "PP-LN"
+tipo = "parcial"
+tecnica = "parcial_cadena"
+respecto = "x"
+enunciado = "ln(x^2 + ({c})y^2)"
+params = { c = [1, 2, 4] }
+derivados = { c4 = "4*({c})" }
+fuente = "Familia propia"
+pistas = ["Cadena del logaritmo: (ln u)' = u'/u.", "Pon y = 2: queda ln(x^2 + {c4}) (el {c4} es ({c})y^2 con y = 2). Derivalo con una sola letra y vuelve a poner y.", "u' respecto a x = 2x."]
+
+[[ficha]]
+id = "PP-XEXP-MY"
+tipo = "parcial"
+tecnica = "parcial_cadena"
+respecto = "y"
+enunciado = "y e^x + x y e^x"
+fuente = "Ejercicio tipo de calculo (∂M/∂y de una EDO exacta)"
+pistas = ["Respecto a y: e^x y x·e^x son numeros.", "Pon x = 2: queda e^2·y + 2e^2·y. Deriva respecto a y (e^2 es un numero) y vuelve a poner x donde estaba el 2.", "La derivada de (numero)·y es el numero."]
+[[ficha]]
+id = "PP-XEXP-NX"
+requiere = ["comprobar_solucion"]  # antes, derivar productos de una variable
+tipo = "parcial"
+tecnica = "parcial_cadena"
+respecto = "x"
+enunciado = "x e^x + 2"
+fuente = "Ejercicio tipo de calculo (∂N/∂x de una EDO exacta)"
+pistas = ["Solo hay x: derivada normal.", "x·e^x es un producto.", "(x)'·e^x + x·(e^x)'."]
+# ---------- Escalon 3: ¿es exacta? (∂M/∂y frente a ∂N/∂x) ----------
+
+[[ficha]]
+id = "EX-EXP"
+errores = [{ respuesta = "2x e^(x^2); 0", mensaje = "∂N/∂x no es 0: N = e^(x^2) depende de x. Por la cadena, ∂N/∂x = 2x·e^(x^2)." }]
+tipo = "exacta"
+tecnica = "exactitud"
+m = "e^(x^2) (2x y + x)"
+n = "e^(x^2)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["M es lo que multiplica a dx; N, lo que multiplica a dy.", "∂M/∂y: pon x = 2, deriva respecto a y con una sola letra y vuelve a poner x (ficha PP-EXP-MY). ∂N/∂x: derivada normal (PP-EXP-NX).", "Si salen iguales, es exacta."]
+[[ficha]]
+id = "EX-XEXP"
+tipo = "exacta"
+tecnica = "exactitud"
+m = "y e^x + x y e^x"
+n = "x e^x + 2"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["M multiplica a dx, N a dy.", "∂M/∂y: pon x = 2 (M = e^2·y + 2e^2·y), deriva respecto a y y vuelve a poner x donde estaba el 2.", "∂N/∂x: x·e^x es un producto, (x)'·e^x + x·(e^x)'. Despues compara con ∂M/∂y."]
+[[ficha]]
+id = "EX-POLI"
+tipo = "exacta"
+tecnica = "exactitud"
+m = "({a})x y^2 + ({b})"
+n = "({a})x^2 y + ({c})y"
+params = { a = [2, 3, 4], b = [1, -5], c = [3, -2] }
+derivados = { a2 = "2*({a})" }
+fuente = "Familia propia"
+pistas = ["M = ({a})x y^2 + ({b}), N = ({a})x^2 y + ({c})y.", "∂M/∂y: pon x = 2 (M = ({a2})y^2 + ({b})), deriva con una sola letra y vuelve a poner x. ∂N/∂x: lo mismo con y = 2.", "Los terminos sueltos (({b}) en M, ({c})y en N) dan 0."]
+
+[[ficha]]
+id = "EX-NO"
+tipo = "exacta"
+tecnica = "exactitud"
+m = "2 + x y"
+n = "x^3"
+fuente = "Ejercicio tipo de calculo: (2 + xy)dx + x^3 dy = 0 (no exacta)"
+pistas = ["M = 2 + x y, N = x^3.", "∂M/∂y: pon x = 2 (M = 2 + 2y), deriva con una sola letra y vuelve a poner x. ∂N/∂x: derivada normal.", "No siempre salen iguales: si no, la EDO no es exacta (hara falta factor integrante)."]
+[[ficha]]
+id = "EX-LOG"
+requiere = ["comprobar_solucion"]  # antes, derivar productos de una variable
+tipo = "exacta"
+tecnica = "exactitud"
+m = "y ln(y) + 3x y"
+n = "x + y^2 e^y"
+fuente = "Ejercicio tipo de calculo (antes del factor integrante 1/y)"
+pistas = ["M = y ln y + 3xy (sin x en el log), N = x + y^2 e^y.", "∂M/∂y: (y ln y)' es un producto en y. En 3xy pon x = 2 (queda 6y), deriva y vuelve a poner x.", "∂N/∂x: pon y = 2 (N = x + 4e^2): solo cuenta el termino con x."]
+[[ficha]]
+id = "EX-LOG-MU"
+tipo = "exacta"
+tecnica = "exactitud"
+m = "ln(y) + 3x"
+n = "x/y + y e^y"
+fuente = "Ejercicio tipo de calculo (tras multiplicar por μ = 1/y)"
+pistas = ["Es la misma EDO de EX-LOG dividida entre y.", "∂M/∂y: ¿cual es la derivada de ln y? El 3x no lleva y: es un numero y da 0.", "∂N/∂x: pon y = 2 (N = x/2 + 2e^2), deriva respecto a x con una sola letra y vuelve a poner y donde estaba el 2."]
+# ---------- Escalon 4: funcion potencial F(x, y) ----------
+
+[[ficha]]
+id = "PO-EXP"
+tipo = "potencial"
+tecnica = "potencial"
+m = "e^(x^2) (2x y + x)"
+n = "e^(x^2)"
+solucion = "y e^(x^2) + e^(x^2)/2"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["F se saca integrando: ∂F/∂y = N es la mas facil aqui.", "Pon x = 2: ∫ e^4 dy = e^4·y, porque e^4 es un numero. Vuelve a poner x (e^4 = e^(x^2)) y suma φ(x).", "Deriva lo que tienes respecto a x, iguala a M y despeja φ'(x) = x e^(x^2)."]
+larga = true
+[[ficha]]
+id = "PO-POLI"
+tipo = "potencial"
+tecnica = "potencial"
+m = "({d})x y^2 + ({b})"
+n = "({d})x^2 y + ({c})"
+params = { a = [1, 2, 3], b = [1, -4], c = [2, -3] }
+derivados = { d = "2*({a})", d4 = "8*({a})" }
+fuente = "Familia propia"
+pistas = ["Integra M respecto a x (y fija) y suma φ(y).", "Pon y = 2: ∫ (({d4})x + ({b})) dx, con una sola letra. Despues vuelve a poner y (el ({d4}) era ({d})y^2) y suma φ(y).", "Deriva F respecto a y, iguala a N y saca φ'(y)."]
+
+[[ficha]]
+id = "PO-XEXP"
+tipo = "potencial"
+tecnica = "potencial"
+m = "y e^x + x y e^x"
+n = "x e^x + 2"
+solucion = "x y e^x + 2y"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Aqui es mas facil integrar N respecto a y.", "Pon x = 2: ∫ (2e^2 + 2) dy, y el parentesis es un numero. Integra con una sola letra, vuelve a poner x donde estaba el 2 y suma φ(x).", "Deriva respecto a x y compara con M para hallar φ'(x)."]
+[[ficha]]
+id = "PO-EXY"
+tipo = "potencial"
+tecnica = "potencial"
+m = "x e^(x y)(2 + x y)"
+n = "x^3 e^(x y)"
+fuente = "Ejercicio tipo de calculo (tras un factor integrante); F = x^2 e^(xy)"
+pistas = ["Integra N respecto a y: x^3 e^(xy) con x fija.", "Pon x = 2: ∫ 8·e^(2y) dy, con una sola letra. Vuelve a poner x (8 = x^3, 2 = x) y suma φ(x).", "Deriva lo que te salga respecto a x (producto) y compara con M para hallar φ(x)."]
+larga = true

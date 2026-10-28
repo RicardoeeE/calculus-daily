@@ -1,0 +1,574 @@
+# Fichas de integrales. Notacion de clase: ^, sen, ln, |x|, e^(...).
+# {a}, {n}... son parametros: cada repaso sale una variante distinta.
+# Las claves se comprueban con sympy al generar cada variante (y en tests/).
+
+# ---------- Escalon 1: tabla, cambio lineal, f'/f ----------
+
+[[ficha]]
+id = "I01"
+tipo = "integral"
+tecnica = "tabla"
+enunciado = "x"
+solucion = "x^2/2"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Es una potencia de x.", "Regla de la potencia: sube el exponente y divide.", "x es x elevado a 1: sube el exponente a 2 y divide entre 2."]
+
+[[ficha]]
+id = "I02"
+tipo = "integral"
+tecnica = "tabla"
+enunciado = "1/x"
+solucion = "ln|x|"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Es la potencia -1: no vale la regla de la potencia.", "Es inmediata de la tabla.", "Piensa que funcion tiene derivada 1/x (y cuidado con x < 0)."]
+
+[[ficha]]
+id = "I03"
+tipo = "integral"
+tecnica = "tabla"
+enunciado = "(x+2)/x"
+solucion = "x + 2 ln|x|"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["El denominador es un solo termino.", "Separa el numerador: cada sumando entre x.", "(x+2)/x = 1 + 2/x."]
+
+[[ficha]]
+id = "I05"
+tipo = "integral"
+tecnica = "logaritmo"
+enunciado = "(2x+4)/(x^2+4x+13)"
+solucion = "ln(x^2+4x+13)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Mira el numerador y compara con el denominador.", "Si el numerador es la derivada del denominador: f'/f.", "Deriva x^2+4x+13 y compara con 2x+4."]
+
+[[ficha]]
+id = "L-RAIZ"
+tipo = "integral"
+tecnica = "lineal"
+enunciado = "1/√(3x+4)"
+solucion = "(2/3)√(3x+4)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Es una potencia de (3x+4).", "Cambio lineal: integra como si fuera u^(-1/2) y divide entre 3.", "∫ u^(-1/2) du = 2u^(1/2)."]
+
+[[ficha]]
+id = "L-RAIZ3"
+tipo = "integral"
+tecnica = "lineal"
+enunciado = "(2x+7)^(1/3)"
+solucion = "(3/8)(2x+7)^(4/3)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Raiz cubica de (2x+7): potencia 1/3.", "Cambio lineal: potencia y divide entre 2.", "Exponente nuevo 1/3 + 1 = 4/3."]
+
+[[ficha]]
+id = "P-XRAIZ"
+tipo = "integral"
+tecnica = "tabla"
+enunciado = "1/(x^2√x)"
+solucion = "-2/(3x^(3/2))"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Junta todo en una sola potencia de x.", "x^2·√x = x^(5/2).", "∫ x^(-5/2) dx: sube el exponente y divide."]
+
+[[ficha]]
+id = "L-LOGNEG"
+tipo = "integral"
+tecnica = "lineal"
+previa = "AL-LOG"
+enunciado = "1/(5-2x)"
+solucion = "-(1/2) ln|5-2x|"
+fuente = "Ejercicio tipo de calculo (EDO separable dx/dt = 5 - 2x)"
+pistas = ["Es 1/(algo lineal).", "Da un logaritmo; divide por el coeficiente de x.", "Ojo al signo: el coeficiente es -2."]
+
+[[ficha]]
+id = "L-LOGPOS"
+tipo = "integral"
+tecnica = "lineal"
+previa = "AL-LOG"
+enunciado = "1/(2+7x)"
+solucion = "(1/7) ln|2+7x|"
+fuente = "Ejercicio tipo de calculo (EDO separable dy/dt = 2 + 7y)"
+pistas = ["Es 1/(algo lineal).", "Logaritmo dividido entre el coeficiente de x.", "u = 2+7x, du = 7 dx."]
+
+[[ficha]]
+id = "LG-CUAD"
+tipo = "integral"
+tecnica = "logaritmo"
+previa = "AL-LOG"
+enunciado = "2x/(x^2+9)"
+solucion = "ln(x^2+9)"
+fuente = "Ejercicio tipo de calculo (EDO separable)"
+pistas = ["Compara numerador y denominador.", "Numerador = derivada del denominador: f'/f.", "La derivada de x^2+9 es 2x."]
+
+[[ficha]]
+id = "P-POT"
+tipo = "integral"
+tecnica = "tabla"
+enunciado = "x^{n}"
+solucion = "x^({n}+1)/({n}+1)"
+params = { n = [2, 3, 4, 5, 6, 7] }
+fuente = "Familia propia"
+pistas = ["Potencia de x.", "Sube el exponente en 1 y divide por el nuevo exponente.", "Ejemplo con otro exponente: ∫ x^10 dx = x^11/11. Haz lo mismo con el {n}."]
+
+[[ficha]]
+id = "P-POTFRAC"
+tipo = "integral"
+tecnica = "tabla"
+enunciado = "x^({p}/{q})"
+solucion = "x^({p}/{q}+1)/({p}/{q}+1)"
+params = { p = [1, 5, -1], q = [2, 3] }  # sin p = q (x^(2/2) no es una raiz)
+fuente = "Familia propia (raices como potencias)"
+pistas = ["Es una raiz escrita como potencia.", "Misma regla de la potencia con exponente fraccionario.", "Suma 1 al exponente {p}/{q} con denominador comun."]
+
+[[ficha]]
+id = "P-POLI"
+tipo = "integral"
+tecnica = "tabla"
+enunciado = "(({a})x^2 + ({b})x + ({c}))"
+solucion = "({a})x^3/3 + ({b})x^2/2 + ({c})x"
+params = { a = [3, 6, -2, 9], b = [4, -5, 2], c = [1, -7, 3] }
+fuente = "Familia propia (areas con polinomios)"
+pistas = ["Suma de potencias.", "Integra termino a termino; las constantes salen fuera.", "La constante {c} integra a {c}x."]
+
+[[ficha]]
+id = "P-EXPLIN"
+tipo = "integral"
+tecnica = "lineal"
+previa = "AL-EXP"
+enunciado = "e^(({a})x)"
+solucion = "e^(({a})x)/({a})"
+params = { a = [2, 3, -1, -4, 5] }
+fuente = "Familia propia (Laplace: e^(-st))"
+pistas = ["Exponencial con algo lineal dentro.", "Cambio lineal: la misma exponencial dividida por el coeficiente.", "Divide entre {a}."]
+
+[[ficha]]
+id = "P-COSLIN"
+tipo = "integral"
+tecnica = "lineal"
+enunciado = "cos(({a})x)"
+solucion = "sen(({a})x)/({a})"
+params = { a = [2, 3, 4, 5] }
+fuente = "Familia propia"
+pistas = ["Coseno con algo lineal dentro.", "Primitiva del coseno y divide por el coeficiente.", "∫ cos(u) du = sen(u)."]
+
+[[ficha]]
+id = "P-SENLIN"
+errores = [{ respuesta = "cos(({a})x)/({a})", mensaje = "La primitiva de sen es -cos: falta el signo menos." }]
+tipo = "integral"
+tecnica = "lineal"
+enunciado = "sen(({a})x)"
+solucion = "-cos(({a})x)/({a})"
+params = { a = [2, 3, 4, 5] }
+fuente = "Familia propia"
+pistas = ["Seno con algo lineal dentro.", "Primitiva del seno (cuidado con el signo) y divide.", "∫ sen(u) du = -cos(u)."]
+
+[[ficha]]
+id = "P-LINPOT"
+tipo = "integral"
+tecnica = "lineal"
+enunciado = "(({a})x + ({b}))^{n}"
+solucion = "(({a})x + ({b}))^({n}+1)/(({a})({n}+1))"
+params = { a = [2, 3, 5], b = [1, -4, 7], n = [3, 4, 5] }
+fuente = "Familia propia"
+pistas = ["Potencia de algo lineal: no hace falta desarrollar.", "Regla de la potencia y divide por el coeficiente de x.", "Divide entre {a}·({n}+1)."]
+
+[[ficha]]
+id = "P-LINLOG"
+tipo = "integral"
+tecnica = "lineal"
+previa = "AL-LOG"
+enunciado = "1/(({a})x + ({b}))"
+solucion = "ln|({a})x + ({b})|/({a})"
+params = { a = [2, 3, 4, -2], b = [1, -5, 7] }
+fuente = "Familia propia (EDOs separables)"
+pistas = ["1/(lineal).", "Logaritmo del denominador, dividido por el coeficiente.", "Divide entre {a}; pon valor absoluto."]
+
+[[ficha]]
+id = "P-FPF"
+tipo = "integral"
+tecnica = "logaritmo"
+enunciado = "({k})x/(x^2 + ({c}))"
+solucion = "({k}/2) ln|x^2 + ({c})|"
+params = { k = [1, 3, 4, 6], c = [1, 4, 9, -1] }
+fuente = "Familia propia (f'/f)"
+pistas = ["El numerador se parece a la derivada del denominador.", "Ajusta la constante para tener f'/f.", "La derivada de x^2 es 2x: saca {k}/2 fuera."]
+
+# ---------- Escalon 2: sustitucion ----------
+
+[[ficha]]
+id = "S-XEXP"
+errores = [{ respuesta = "e^(({a})x^2)", mensaje = "Con u = ({a})x^2, du = 2·({a})·x dx: falta dividir entre 2·({a})." }]
+tipo = "integral"
+tecnica = "sustitucion"
+previa = "AL-EXP"
+enunciado = "x e^(({a})x^2)"
+solucion = "e^(({a})x^2)/(2({a}))"
+params = { a = [1, 2, 3, -1] }
+fuente = "Familia propia"
+pistas = ["Hay una funcion dentro de la exponencial y, fuera, casi su derivada.", "Sustitucion u = {a}x^2.", "du = 2·{a}·x dx: despeja x dx."]
+
+[[ficha]]
+id = "S-XPOT"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "x (x^2 + ({c}))^{n}"
+solucion = "(x^2 + ({c}))^({n}+1)/(2({n}+1))"
+params = { c = [1, 3, -5], n = [3, 4, 5] }
+fuente = "Familia propia"
+pistas = ["No desarrolles la potencia.", "u = x^2 + {c}: su derivada esta casi fuera.", "du = 2x dx → x dx = du/2."]
+
+[[ficha]]
+id = "S-COSSEN"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "cos(x) sen(x)^{n}"
+solucion = "sen(x)^({n}+1)/({n}+1)"
+params = { n = [2, 3, 4, 5] }
+fuente = "Familia propia"
+pistas = ["Una potencia de sen y, multiplicando, su derivada.", "u = sen(x).", "du = cos(x) dx: queda ∫ u^{n} du."]
+
+[[ficha]]
+id = "S-SENCOS"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "sen(x) cos(x)^{n}"
+solucion = "-cos(x)^({n}+1)/({n}+1)"
+params = { n = [2, 3, 4] }
+fuente = "Familia propia"
+pistas = ["Una potencia de cos y, multiplicando, casi su derivada.", "u = cos(x).", "du = -sen(x) dx: cuidado con el signo."]
+
+[[ficha]]
+id = "S-LNX"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "ln(x)^{n}/x"
+solucion = "ln(x)^({n}+1)/({n}+1)"
+params = { n = [1, 2, 3] }
+fuente = "Familia propia"
+pistas = ["Aparece ln(x) y tambien 1/x.", "u = ln(x).", "du = dx/x: queda ∫ u^{n} du."]
+
+[[ficha]]
+id = "S-XRAIZ"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "x/√(x^2 + ({c}))"
+solucion = "√(x^2 + ({c}))"
+params = { c = [1, 4, 9] }
+fuente = "Familia propia"
+pistas = ["Raiz de algo cuya derivada esta casi fuera.", "u = x^2 + {c}.", "x dx = du/2 y ∫ u^(-1/2) du = 2√u."]
+
+[[ficha]]
+id = "S-EXPRAT"
+tipo = "integral"
+tecnica = "sustitucion"
+previa = "AL-EXP"
+enunciado = "e^x/(e^x + ({c}))"
+solucion = "ln(e^x + ({c}))"
+params = { c = [1, 2, 5] }
+fuente = "Familia propia"
+pistas = ["Compara el numerador con la derivada del denominador.", "Es f'/f con f = e^x + {c}.", "La derivada de e^x es e^x."]
+
+[[ficha]]
+id = "S-X2RAIZ"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "x^2/√(2+x^3)"
+solucion = "(2/3)√(2+x^3)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Dentro de la raiz hay x^3; fuera, x^2.", "u = 2 + x^3.", "du = 3x^2 dx."]
+
+[[ficha]]
+id = "S-COSINV"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "cos(1/x)/x^2"
+solucion = "-sen(1/x)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Mira lo que hay dentro del coseno y su derivada.", "u = 1/x.", "du = -dx/x^2: ojo al signo."]
+
+[[ficha]]
+id = "S-X3EXP"
+errores = [{ respuesta = "e^(x^4)", mensaje = "Con u = x^4, du = 4x^3 dx: falta dividir entre 4." }]
+tipo = "integral"
+tecnica = "sustitucion"
+previa = "AL-EXP"
+enunciado = "x^3 e^(x^4)"
+solucion = "e^(x^4)/4"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Exponente x^4 y fuera x^3.", "u = x^4.", "du = 4x^3 dx: falta un 1/4."]
+
+[[ficha]]
+id = "S-XPOT5"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "x (3x^2+1)^5"
+solucion = "(3x^2+1)^6/36"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["No desarrolles la potencia 5.", "u = 3x^2 + 1.", "du = 6x dx."]
+
+[[ficha]]
+id = "S-ARCSEN"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "arcsen(x)/√(1-x^2)"
+solucion = "arcsen(x)^2/2"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["1/√(1-x^2) es la derivada de algo que tambien aparece.", "u = arcsen(x).", "du = dx/√(1-x^2): queda ∫ u du."]
+
+[[ficha]]
+id = "S-X2POT"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "x^2 (2x^3-5)^4"
+solucion = "(2x^3-5)^5/30"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["No desarrolles la potencia.", "u = 2x^3 - 5.", "du = 6x^2 dx."]
+
+[[ficha]]
+id = "S-XCUBICA"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "5x/(2x^2+3)^(1/3)"
+solucion = "(15/8)(2x^2+3)^(2/3)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Raiz cubica de algo cuya derivada lleva x.", "u = 2x^2 + 3.", "du = 4x dx; ∫ u^(-1/3) du = (3/2)u^(2/3)."]
+
+[[ficha]]
+id = "S-SECTAN"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "sec(x)^2 tan(x)^3"
+solucion = "tan(x)^4/4"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["sec^2 es la derivada de algo que aparece.", "u = tan(x).", "du = sec(x)^2 dx: queda ∫ u^3 du."]
+
+[[ficha]]
+id = "S-XRAIZLIN"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "x/√(x+4)"
+solucion = "(2/3)(x+4)^(3/2) - 8√(x+4)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["El x de arriba no es la derivada de lo de dentro.", "t = x + 4, asi x = t - 4.", "Queda ∫ (t-4)/√t dt: separa en dos potencias."]
+
+[[ficha]]
+id = "S-XRAIZLIN2"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "x √(x+2)"
+solucion = "(2/5)(x+2)^(5/2) - (4/3)(x+2)^(3/2)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["El x de fuera estorba: no es la derivada de lo de dentro.", "t = x + 2, x = t - 2.", "∫ (t-2)√t dt = ∫ (t^(3/2) - 2t^(1/2)) dt."]
+
+[[ficha]]
+id = "S-EXPMAS"
+tipo = "integral"
+tecnica = "sustitucion"
+previa = "AL-EXP"
+enunciado = "1/(e^x + 2)"
+solucion = "x/2 - ln(e^x + 2)/2"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["No es f'/f tal cual.", "Truco: escribe 1 = (1/2)(e^x + 2 - e^x) en el numerador.", "1/(e^x + 2) = (1/2)(1 - e^x/(e^x + 2))."]
+
+[[ficha]]
+id = "S-LNRAT"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "(ln(x) + 3)/(x (ln(x) + 1))"
+solucion = "ln(x) + 2 ln|ln(x) + 1|"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Hay logaritmos y un 1/x: piensa en u = ln x.", "Con u = ln x queda ∫ (u + 3)/(u + 1) du.", "(u + 3)/(u + 1) = 1 + 2/(u + 1)."]
+
+[[ficha]]
+id = "S-BASE3"
+tipo = "integral"
+tecnica = "sustitucion"
+previa = "AL-EXP"
+enunciado = "x 3^(x^2+1)"
+solucion = "3^(x^2+1)/(2 ln(3))"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Exponencial de base 3 con x^2 dentro.", "u = x^2 + 1.", "∫ 3^u du = 3^u / ln 3."]
+
+[[ficha]]
+id = "S-XRAIZNEG"
+tipo = "integral"
+tecnica = "sustitucion"
+enunciado = "x/√(4-x^2)"
+solucion = "-√(4-x^2)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Raiz de algo cuya derivada lleva x.", "u = 4 - x^2.", "x dx = -du/2: cuidado con el signo."]
+
+# ---------- Escalon 3: partes ----------
+
+[[ficha]]
+id = "PA-XEXP"
+errores = [{ respuesta = "x e^(({a})x)/({a})", mensaje = "Partes a medias: tienes u·v; falta restar ∫ v du = ∫ e^(({a})x)/({a}) dx." }]
+tipo = "integral"
+tecnica = "partes"
+enunciado = "x e^(({a})x)"
+solucion = "e^(({a})x)(x/({a}) - 1/({a})^2)"
+params = { a = [1, 2, 3, -1, -2] }
+fuente = "Familia propia (Laplace de t)"
+pistas = ["Producto de polinomio por exponencial.", "Partes: u = x (se simplifica al derivar), dv = e^({a}x) dx.", "v = e^({a}x)/{a}; queda otra integral inmediata."]
+
+[[ficha]]
+id = "PA-XCOS"
+tipo = "integral"
+tecnica = "partes"
+enunciado = "x cos(({a})x)"
+solucion = "x sen(({a})x)/({a}) + cos(({a})x)/({a})^2"
+params = { a = [1, 2, 3] }
+fuente = "Familia propia"
+pistas = ["Polinomio por coseno.", "Partes con u = x.", "v = sen({a}x)/{a}."]
+
+[[ficha]]
+id = "PA-XSEN"
+tipo = "integral"
+tecnica = "partes"
+enunciado = "x sen(({a})x)"
+solucion = "-x cos(({a})x)/({a}) + sen(({a})x)/({a})^2"
+params = { a = [1, 2, 3] }
+fuente = "Familia propia"
+pistas = ["Polinomio por seno.", "Partes con u = x.", "v = -cos({a}x)/{a}: cuidado con los dos signos menos."]
+
+[[ficha]]
+id = "PA-XNLN"
+tipo = "integral"
+tecnica = "partes"
+enunciado = "x^{n} ln(x)"
+solucion = "x^({n}+1) ln(x)/({n}+1) - x^({n}+1)/({n}+1)^2"
+params = { n = [1, 2, 3] }
+fuente = "Familia propia"
+pistas = ["Hay un logaritmo multiplicando.", "Partes: u = ln x (el log se deriva), dv = x^{n} dx.", "du = dx/x, v = x^({n}+1)/({n}+1)."]
+
+[[ficha]]
+id = "PA-LNLIN"
+tipo = "integral"
+tecnica = "partes"
+enunciado = "ln(x+1)"
+solucion = "(x+1) ln(x+1) - x"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["No esta en la tabla.", "Partes con u = ln(x+1), dv = dx.", "du = dx/(x+1) y, si eliges v = x + 1, la integral que queda es ∫ 1 dx."]
+
+[[ficha]]
+id = "PA-ATAN"
+tipo = "integral"
+tecnica = "partes"
+enunciado = "arctan(x)"
+solucion = "x arctan(x) - ln(1+x^2)/2"
+fuente = "Familia propia"
+pistas = ["Funcion sola que no esta en la tabla.", "Partes con u = arctan x, dv = dx.", "Queda ∫ x/(1+x^2) dx: es f'/f salvo constante."]
+
+[[ficha]]
+id = "PA-X2EXP"
+tipo = "integral"
+tecnica = "partes"
+enunciado = "x^2 e^(-x)"
+solucion = "-(x^2 + 2x + 2) e^(-x)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Polinomio de grado 2 por exponencial.", "Partes dos veces, siempre derivando el polinomio.", "Primera: u = x^2, dv = e^(-x) dx, v = -e^(-x)."]
+larga = true
+
+# ---------- Escalon 4: racionales y completar cuadrado ----------
+
+[[ficha]]
+id = "R-DOS"
+tipo = "integral"
+tecnica = "racionales"
+previa = "AL-FRAC"
+enunciado = "1/((x - ({a}))(x - ({b})))"
+solucion = "(ln|x - ({a})| - ln|x - ({b})|)/(({a}) - ({b}))"
+params = { a = [1, 2, 3], b = [-1, -2] }
+fuente = "Familia propia"
+pistas = ["Denominador ya factorizado con dos raices distintas.", "Fracciones simples: A/(x - ({a})) + B/(x - ({b})).", "Da a x el valor {a} y luego ({b}) para hallar A y B."]
+
+[[ficha]]
+id = "R-XX"
+tipo = "integral"
+tecnica = "racionales"
+previa = "AL-FRAC"
+enunciado = "1/(x^2 - 2x)"
+solucion = "(1/2) ln|x-2| - (1/2) ln|x|"
+fuente = "Ejercicio tipo de calculo (factor integrante de una EDO lineal)"
+pistas = ["Factoriza el denominador.", "x^2 - 2x = x(x-2): fracciones simples.", "1/(x(x-2)) = (1/2)/(x-2) - (1/2)/x."]
+
+[[ficha]]
+id = "R-LIN"
+tipo = "integral"
+tecnica = "racionales"
+previa = "AL-FRAC"
+enunciado = "(x+5)/(x^2+x-2)"
+solucion = "2 ln|x-1| - ln|x+2|"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Grado de arriba menor: no hace falta dividir.", "x^2 + x - 2 = (x-1)(x+2).", "A/(x-1) + B/(x+2): x = 1 da A, x = -2 da B."]
+
+[[ficha]]
+id = "I04"
+errores = [{ respuesta = "arctan((x+2)/3)", mensaje = "Falta el 1/3: ∫ du/(u^2 + 3^2) = (1/3)·arctan(u/3)." }]
+tipo = "integral"
+tecnica = "cuadrado"
+previa = "AL-CUAD"
+enunciado = "1/(x^2+4x+13)"
+solucion = "(1/3) arctan((x+2)/3)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["El denominador no tiene raices reales.", "Completa el cuadrado: (x+2)^2 + 9.", "∫ du/(u^2 + 3^2) = (1/3) arctan(u/3)."]
+
+[[ficha]]
+id = "C-ATAN"
+tipo = "integral"
+tecnica = "cuadrado"
+previa = "AL-CUAD"
+enunciado = "1/((x - ({h}))^2 + ({k})^2)"
+solucion = "arctan((x - ({h}))/({k}))/({k})"
+params = { h = [1, 2, 3, -1], k = [1, 2, 3] }
+mostrar = "desarrollado"
+fuente = "Familia propia (se muestra desarrollado)"
+pistas = ["El denominador no factoriza: busca un cuadrado.", "Completa el cuadrado del denominador.", "Llama u = x - ({h}): queda ∫ du/(u^2 + {k}^2), que es de tabla: (1/c)·arctan(u/c) con c = {k}."]
+
+# ---------- Escalon 5: trigonometricas ----------
+
+[[ficha]]
+id = "T-SEN2"
+errores = [{ respuesta = "x/2 + sen(6x)/12", mensaje = "sen^2 u = (1 - cos 2u)/2: el coseno va restando, y al integrar sale - sen(6x)/12." }]
+tipo = "integral"
+tecnica = "trigonometricas"
+enunciado = "sen(3x)^2"
+solucion = "x/2 - sen(6x)/12"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Potencia par de seno.", "Angulo doble: sen^2(3x) = (1 - cos 6x)/2.", "Integra 1/2 y -cos(6x)/2 por separado."]
+
+[[ficha]]
+id = "T-COS2"
+tipo = "integral"
+tecnica = "trigonometricas"
+enunciado = "cos(x)^2"
+solucion = "x/2 + sen(2x)/4"
+fuente = "Familia propia"
+pistas = ["Potencia par de coseno.", "Angulo doble: cos^2 x = (1 + cos 2x)/2.", "Integra cada termino."]
+
+[[ficha]]
+id = "T-SEN3"
+tipo = "integral"
+tecnica = "trigonometricas"
+enunciado = "sen(x)^3 cos(x)^2"
+solucion = "cos(x)^5/5 - cos(x)^3/3"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Potencia impar de seno.", "Aparta un sen x y usa sen^2 = 1 - cos^2; luego u = cos x.", "Queda -∫ (1 - u^2) u^2 du."]
+larga = true
+
+[[ficha]]
+id = "T-CSC"
+tipo = "integral"
+tecnica = "trigonometricas"
+enunciado = "1/sen(x)"
+solucion = "(1/2) ln|(1 - cos(x))/(1 + cos(x))|"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Es 1/sen x: potencia impar (-1) de seno.", "Multiplica arriba y abajo por sen x, usa sen^2 = 1 - cos^2 y haz u = cos x.", "Queda -∫ du/(1 - u^2): fracciones simples."]
+larga = true
+
+[[ficha]]
+id = "T-UNOMENOS"
+tipo = "integral"
+tecnica = "trigonometricas"
+enunciado = "1/(1-sen(x))"
+solucion = "tan(x) + sec(x)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Denominador 1 - sen x.", "Multiplica y divide por (1 + sen x).", "Queda (1 + sen x)/cos^2 x: separa en dos integrales."]
+larga = true

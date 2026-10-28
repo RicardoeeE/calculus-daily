@@ -1,0 +1,12 @@
+# Entorno y caches (los crea el programa)
+.venv/
+.cache/
+__pycache__/
+*.pyc
+*.lock
+
+# Fotogramas intermedios del GIF (herramientas/capturas_ventana.py)
+programa/docs/capturas/fotogramas/
+
+# usuario/datos NO se ignora a proposito: `cerrar` sube tus datos a TU repositorio
+# (clonalo como privado si quieres esa copia en GitHub). `doctor` lo comprueba.

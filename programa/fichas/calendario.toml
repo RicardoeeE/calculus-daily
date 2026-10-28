@@ -1,0 +1,21 @@
+# Calendario de ejemplo: cada examen abre sus tecnicas unos dias antes aunque la
+# escalera no haya llegado. Cambia nombres y fechas por los de tu curso.
+# Este archivo no contiene fichas (no tiene [[ficha]]).
+
+[[examen]]
+nombre = "Parcial 1 (EDOs de orden superior)"
+fecha = "2027-03-15"
+dias_antes = 14
+tecnicas = ["caracteristica", "comprobar_solucion", "wronskiano", "forma_yp", "pvi", "partes", "producto"]
+
+[[examen]]
+nombre = "Parcial 2 (integrales y exactas)"
+fecha = "2027-04-26"
+dias_antes = 21
+tecnicas = ["racionales", "cuadrado", "partes", "exactitud", "potencial"]
+
+[[examen]]
+nombre = "Final"
+fecha = "2027-06-07"
+dias_antes = 28
+tecnicas = ["sustitucion", "trigonometricas"]

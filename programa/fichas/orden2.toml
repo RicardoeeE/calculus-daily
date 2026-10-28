@@ -1,0 +1,137 @@
+# EDOs lineales de orden superior con coeficientes constantes. Las abre
+# fichas/calendario.toml antes de un examen, aunque la escalera no haya llegado.
+# En `edo` se escribe con sintaxis de sympy: ypp = y'', yp = y', y = y.
+
+# ---------- Ecuacion caracteristica ----------
+
+[[ficha]]
+id = "T2-CAR-REAL"
+errores = [{ respuesta = "-({r1}), -({r2})", mensaje = "Signos cambiados: si el polinomio es (r - r1)(r - r2), las raices son r1 y r2, no -r1 y -r2." }]
+tipo = "raices"
+tecnica = "caracteristica"
+enunciado = "x^2 + ({s})x + ({p})"
+params = { r1 = [1, 2, 3, -1], r2 = [-2, -3, 4] }
+derivados = { s = "-(({r1}) + ({r2}))", p = "({r1})({r2})" }
+fuente = "Familia propia"
+pistas = ["y = e^(rx) convierte la EDO en un polinomio en r.", "Busca dos numeros que sumen {s} cambiado de signo y multipliquen {p}.", "Tambien vale la formula de la cuadratica: r = (-B ± √(B^2 - 4C))/2, con B = {s} y C = {p}."]
+
+[[ficha]]
+id = "T2-CAR-COMP"
+errores = [{ respuesta = "({a}) + ({b}), ({a}) - ({b})", mensaje = "Falta la i: con discriminante negativo, √(-k) = i·√k, asi que las raices son ({a}) ± ({b})i." }]
+tipo = "raices"
+tecnica = "caracteristica"
+enunciado = "x^2 + ({s})x + ({p})"
+params = { a = [1, -1, 2, 0], b = [1, 2, 3] }
+derivados = { s = "-2*({a})", p = "({a})^2 + ({b})^2", t = "2*({a})" }
+fuente = "Familia propia"
+pistas = ["El discriminante sale negativo.", "r = ({t} ± √(discriminante))/2; la raiz de un numero negativo es i por la raiz del positivo, como √(-9) = 3i.", "Escribe las dos raices como (parte real) ± (parte imaginaria)·i."]
+
+[[ficha]]
+id = "T2-CAR-DOBLE"
+errores = [{ respuesta = "-({r})", mensaje = "Signo: (r - a)^2 = 0 tiene la raiz a (doble), no -a." }]
+tipo = "raices"
+tecnica = "caracteristica"
+enunciado = "x^2 + ({s})x + ({p})"
+params = { r = [1, 2, -3, 4] }
+derivados = { s = "-2*({r})", p = "({r})^2" }
+fuente = "Familia propia"
+pistas = ["Mira si el polinomio es un cuadrado perfecto.", "Un cuadrado perfecto es como (r - 5)^2 = r^2 - 10r + 25: el coeficiente de r es -2 veces la raiz.", "Una sola raiz, que cuenta dos veces."]
+
+# ---------- Solucion general ----------
+
+[[ficha]]
+id = "T2-GEN-REAL"
+tipo = "edo_solucion"
+tecnica = "caracteristica"
+edo = "ypp + ({s})*yp + ({p})*y"
+rhs = "0"
+constantes = 2
+solucion = "C1 e^(({r1})x) + C2 e^(({r2})x)"
+enunciado = ""
+params = { r1 = [1, 2, -1], r2 = [-2, 3, -4] }
+derivados = { s = "-(({r1}) + ({r2}))", p = "({r1})({r2})" }
+fuente = "Familia propia"
+pistas = ["Primero la ecuacion caracteristica r^2 + ({s})r + ({p}) = 0.", "Cada raiz real r da una solucion e^(rx).", "y = C1 e^(r1 x) + C2 e^(r2 x)."]
+
+[[ficha]]
+id = "T2-GEN-COMP"
+errores = [{ forma = "C1 cos(({b})x) + C2 sen(({b})x)", mensaje = "Falta el factor e^(αx): con raices α ± βi la base es e^(αx)·cos(βx) y e^(αx)·sen(βx), aqui α = ({a})." }]
+tipo = "edo_solucion"
+tecnica = "caracteristica"
+edo = "ypp + ({s})*yp + ({p})*y"
+rhs = "0"
+constantes = 2
+solucion = "e^(({a})x)(C1 cos(({b})x) + C2 sen(({b})x))"
+enunciado = ""
+params = { a = [1, -1, 2], b = [1, 2, 3] }
+derivados = { s = "-2*({a})", p = "({a})^2 + ({b})^2" }
+fuente = "Familia propia"
+pistas = ["Raices de r^2 + ({s})r + ({p}): salen complejas α ± βi.", "Con α ± βi la base es e^(αx)cos(βx) y e^(αx)sen(βx).", "y = e^(αx)(C1 cos(βx) + C2 sen(βx))."]
+larga = true
+
+[[ficha]]
+id = "T2-GEN-DOBLE"
+errores = [{ respuesta = "C1 e^(({r})x) + C2 e^(({r})x)", mensaje = "Con raiz doble, e^(rx) repetida no da dos soluciones independientes: la segunda es x·e^(rx)." }, { respuesta = "C1 e^(({r})x) + C2 e^(-({r})x)", mensaje = "La raiz es doble (r = ({r}) dos veces), no ±({r}): la base es e^(rx) y x·e^(rx)." }]
+tipo = "edo_solucion"
+tecnica = "caracteristica"
+edo = "ypp + ({s})*yp + ({p})*y"
+rhs = "0"
+constantes = 2
+solucion = "(C1 + C2 x) e^(({r})x)"
+enunciado = ""
+params = { r = [1, 2, -3] }
+derivados = { s = "-2*({r})", p = "({r})^2" }
+fuente = "Familia propia"
+pistas = ["La caracteristica tiene raiz doble.", "Con raiz doble, la segunda solucion es x·e^(rx).", "y = (C1 + C2 x) e^(rx)."]
+
+# ---------- Comprobar soluciones (derivar y sustituir) ----------
+
+[[ficha]]
+id = "T2-OP-XEXP"
+errores = [{ respuesta = "e^(({a})x)", mensaje = "Revisa y'': (x e^(ax))'' = 2a·e^(ax) + a^2·x·e^(ax). Con raiz doble, x·e^(ax) es solucion y el resultado debe ser 0." }]
+tipo = "calculo"
+tecnica = "comprobar_solucion"
+enunciado = "Para y = x e^(({a})x), calcula y'' + ({s})y' + ({q})y"
+funciones = { f = "x e^(({a})x)" }
+calculo = "diff(f, x, 2) - 2*({a})*diff(f, x) + ({a})**2*f"
+params = { a = [1, 2, 3, -1] }
+derivados = { s = "-2*({a})", q = "({a})^2" }
+fuente = "Familia propia"
+pistas = ["Primero y' (producto) y luego y'' (otra vez producto).", "y' = e^(({a})x) + ({a})x e^(({a})x).", "Sustituye y saca e^(({a})x) factor comun: ¿que queda?"]
+
+[[ficha]]
+id = "T2-OP-POT"
+tipo = "calculo"
+tecnica = "comprobar_solucion"
+enunciado = "Para y = x^({k}), calcula x^2 y'' + ({b})x y' + ({c})y"
+funciones = { f = "x^({k})" }
+calculo = "x**2*diff(f, x, 2) + ({b})*x*diff(f, x) + ({c})*f"
+params = { k = [-1, -2, 2, 3], b = [4, -1], c = [2, -2] }
+fuente = "Familia propia"
+pistas = ["Deriva x^({k}) dos veces con la regla de la potencia.", "y' = {k} x^({k}-1), y'' = {k}({k}-1) x^({k}-2).", "Al multiplicar por x^2 y por x todo queda como (numero)·x^({k})."]
+
+# ---------- Wronskiano ----------
+
+[[ficha]]
+id = "T2-WR-EXP"
+errores = [{ respuesta = "(({a}) - ({b})) e^((({a}) + ({b}))x)", mensaje = "Signo cambiado: W = y1·y2' - y1'·y2, en ese orden." }]
+tipo = "calculo"
+tecnica = "wronskiano"
+enunciado = "Calcula el wronskiano W = y1·y2' - y1'·y2 de y1 = e^(({a})x), y2 = e^(({b})x)"
+funciones = { f = "e^(({a})x)", g = "e^(({b})x)" }
+calculo = "f*diff(g, x) - diff(f, x)*g"
+params = { a = [1, 2, -1], b = [3, -2, 0] }
+fuente = "Familia propia"
+pistas = ["W = y1 y2' - y1' y2.", "Deriva cada exponencial con la cadena, como (e^(7u))' = 7e^(7u).", "Las dos partes llevan la misma exponencial (se suman los exponentes): sacala factor comun."]
+
+[[ficha]]
+id = "T2-WR-DOBLE"
+errores = [{ respuesta = "-e^(2({a})x)", mensaje = "Signo cambiado: W = y1·y2' - y1'·y2, en ese orden." }]
+tipo = "calculo"
+tecnica = "wronskiano"
+enunciado = "Calcula el wronskiano W = y1·y2' - y1'·y2 de y1 = e^(({a})x), y2 = x e^(({a})x)"
+funciones = { f = "e^(({a})x)", g = "x e^(({a})x)" }
+calculo = "f*diff(g, x) - diff(f, x)*g"
+params = { a = [1, 2, -3] }
+fuente = "Familia propia"
+pistas = ["y2 es un producto: y2' = e^(({a})x) + ({a})x e^(({a})x).", "Sustituye en y1 y2' - y1' y2.", "Los terminos con x se cancelan."]

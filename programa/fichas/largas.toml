@@ -1,0 +1,97 @@
+# Integrales largas: varias tecnicas encadenadas (cambio + fracciones simples,
+# raices con indices distintos...). log = ln.
+
+[[ficha]]
+id = "S-EXPMIX"
+tipo = "integral"
+tecnica = "sustitucion"
+previa = "AL-EXP"
+enunciado = "1/(4·{a}^x + {a}^(-x))"
+solucion = "arctan(2·{a}^x)/(2 ln({a}))"
+params = { a = [2, 3, 5] }
+fuente = "Familia propia"
+pistas = ["Mezcla {a}^x y {a}^(-x): todo se puede escribir con {a}^x.", "Multiplica arriba y abajo por {a}^x y haz t = {a}^x (dt = t ln({a}) dx).", "Queda (1/ln({a}))·∫ dt/(4t^2 + 1): un arctan."]
+larga = true
+
+[[ficha]]
+id = "R-DOBLE"
+tipo = "integral"
+tecnica = "racionales"
+previa = "AL-FRAC"
+enunciado = "x/((x+2)(x-1)^2)"
+solucion = "(2/9) ln|x-1| - (2/9) ln|x+2| - 1/(3(x-1))"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Denominador factorizado, con una raiz doble.", "Fracciones simples: A/(x+2) + B/(x-1) + C/(x-1)^2.", "A se halla con x = -2, C con x = 1; B con otro valor."]
+larga = true
+
+[[ficha]]
+id = "R-CUBICA"
+tipo = "integral"
+tecnica = "racionales"
+previa = "AL-FRAC"
+enunciado = "(3x^2+4x+7)/(x^3-3x-2)"
+solucion = "3 ln|x-2| + 2/(x+1)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Denominador de grado 3 sin factorizar.", "x = 2 es raiz: x^3 - 3x - 2 = (x-2)(x+1)^2; luego fracciones simples.", "Escribe A/(x-2) + B/(x+1) + C/(x+1)^2 e iguala numeradores."]
+larga = true
+
+[[ficha]]
+id = "R-IRRED"
+tipo = "integral"
+tecnica = "racionales"
+enunciado = "(2x^2+x)/(x^3-1)"
+solucion = "ln|x-1| + (1/2) ln(x^2+x+1) + (1/√3) arctan((2x+1)/√3)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Denominador de grado 3 con una raiz racional.", "x = 1 es raiz: (x-1)(x^2+x+1); el cuadratico no tiene raices reales.", "Fracciones simples: A/(x-1) + (Bx+C)/(x^2+x+1); el segundo da ln y arctan (completa cuadrado)."]
+larga = true
+
+[[ficha]]
+id = "C-COS"
+tipo = "integral"
+tecnica = "cuadrado"
+previa = "AL-CUAD"
+enunciado = "sen(x)/(cos(x)^2 - 4cos(x) + 13)"
+solucion = "-(1/3) arctan((cos(x)-2)/3)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Solo hay un sen x arriba y cos x abajo.", "u = cos x (du = -sen x dx); luego completa el cuadrado.", "u^2 - 4u + 13 = (u-2)^2 + 9: arctan."]
+larga = true
+
+[[ficha]]
+id = "T-RACSEN"
+tipo = "integral"
+tecnica = "trigonometricas"
+enunciado = "4/(cos(x) - 2·sen(x)cos(x))"
+solucion = "2 ln|1-sen(x)| + (2/3) ln|1+sen(x)| - (8/3) ln|1-2·sen(x)|"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Saca cos x factor comun del denominador.", "Multiplica arriba y abajo por cos x y usa cos^2 = 1 - sen^2; t = sen x.", "Queda 4/((1-t)(1+t)(1-2t)): fracciones simples."]
+larga = true
+
+[[ficha]]
+id = "IR-RAIZ"
+tipo = "integral"
+tecnica = "irracionales"
+enunciado = "1/(x√(x+4))"
+solucion = "(1/2) ln|√(x+4)-2| - (1/2) ln(√(x+4)+2)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Una unica raiz, de x+4.", "t^2 = x+4 (dx = 2t dt, x = t^2-4).", "Queda 2∫ dt/(t^2-4): fracciones simples."]
+larga = true
+
+[[ficha]]
+id = "IR-DOS"
+tipo = "integral"
+tecnica = "irracionales"
+enunciado = "1/(x^(1/2) + x^(1/3))"
+solucion = "2x^(1/2) - 3x^(1/3) + 6x^(1/6) - 6 ln(x^(1/6) + 1)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Dos raices de x, de indices 2 y 3.", "t^6 = x (6 = mcm de 2 y 3); dx = 6t^5 dt.", "Queda 6∫ t^3/(t+1) dt: divide polinomios."]
+larga = true
+
+[[ficha]]
+id = "IR-TRES"
+tipo = "integral"
+tecnica = "irracionales"
+enunciado = "1/((1+x)^(1/2) + (1+x)^(1/4))"
+solucion = "2(1+x)^(1/2) - 4(1+x)^(1/4) + 4 ln((1+x)^(1/4) + 1)"
+fuente = "Ejercicio tipo de calculo"
+pistas = ["Raices de 1+x de indices 2 y 4.", "t^4 = 1+x, dx = 4t^3 dt.", "Queda 4∫ t^2/(t+1) dt: divide polinomios."]
+larga = true

@@ -1,0 +1,19 @@
+# Calendario fijo para las pruebas (tests/__init__.py lo activa).
+
+[[examen]]
+nombre = "P2 EDOs (orden superior)"
+fecha = "2026-11-12"
+dias_antes = 17
+tecnicas = ["caracteristica", "comprobar_solucion", "wronskiano", "forma_yp", "pvi", "partes", "producto"]
+
+[[examen]]
+nombre = "P3 EDOs"
+fecha = "2026-12-17"
+dias_antes = 24
+tecnicas = ["racionales", "cuadrado", "partes", "exactitud", "potencial"]
+
+[[examen]]
+nombre = "Final EDOs"
+fecha = "2027-01-14"
+dias_antes = 31
+tecnicas = ["sustitucion", "trigonometricas"]

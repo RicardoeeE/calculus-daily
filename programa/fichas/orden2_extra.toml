@@ -1,0 +1,232 @@
+# EDOs de orden superior, ampliacion: coeficientes indeterminados, Euler-Cauchy,
+# PVI y variacion de constantes. Mismo formato que orden2.toml.
+
+[[ficha]]
+id = "T2X-CAR-ORD3"
+previa = "AL-CUBICA"
+tipo = "raices"
+tecnica = "caracteristica"
+enunciado = "x^3 + ({k})x^2 + 4x + 4({k})"
+params = { k = [1, 2, 3] }
+fuente = "Familia propia (orden 3: una raiz real y dos complejas)"
+pistas = ["Orden 3: la caracteristica es un cubo, con tres raices.", "Agrupa de dos en dos: r^2(r + ({k})) + 4(r + ({k})) = (r + ({k}))(r^2 + 4).", "Iguala cada factor a 0: r + ({k}) = 0 da la raiz real y r^2 + 4 = 0, el par complejo."]
+[[ficha]]
+id = "T2X-YP-EXP"
+tipo = "edo_solucion"
+tecnica = "forma_yp"
+edo = "ypp + ({s})*yp + ({p})*y"
+rhs = "e^(({k})x)"
+constantes = 0
+solucion = "({c}) e^(({k})x)"
+enunciado = ""
+params = { k = [4, 1, -1, -2] }
+derivados = { s = "-5", p = "6", c = "1/(({k})^2 - 5*({k}) + 6)" }
+fuente = "Familia propia (exponencial en el lado derecho, sin resonancia: y'' - 5y' + 6y)"
+pistas = ["El lado derecho es e^(({k})x): prueba y_p = A e^(({k})x).", "Las raices de la caracteristica son 2 y 3; ({k}) no coincide con ninguna, asi que no hay que multiplicar por x.", "Sustituye y_p = A e^(({k})x): A (({k})^2 - 5·({k}) + 6) = 1, y despeja A."]
+[[ficha]]
+id = "T2X-YP-RES"
+errores = [{ forma = "e^(({a})x)", mensaje = "Hay resonancia: ({a}) es raiz de la caracteristica, asi que e^(({a})x) ya es solucion de la homogenea. Prueba y_p = A·x·e^(({a})x)." }]
+tipo = "edo_solucion"
+tecnica = "forma_yp"
+edo = "ypp + ({s})*yp + ({p})*y"
+rhs = "e^(({a})x)"
+constantes = 0
+solucion = "({c}) x e^(({a})x)"
+enunciado = ""
+params = { a = [1, 2, 3], b = [-1, 4, 5] }
+derivados = { s = "-(({a}) + ({b}))", p = "({a})({b})", c = "1/(({a}) - ({b}))" }
+fuente = "Familia propia"
+pistas = ["El lado derecho e^(({a})x) tiene ({a}) como raiz de la caracteristica: hay resonancia.", "Con raiz simple la prueba es y_p = A x e^(({a})x) (se multiplica por x).", "Sustituye y_p = A x e^(({a})x): los terminos con x se cancelan y queda A·(2·({a}) + ({s})) = 1; despeja A."]
+
+[[ficha]]
+id = "T2X-YP-POLRES"
+tipo = "edo_solucion"
+tecnica = "forma_yp"
+edo = "ypp + 3*yp"
+rhs = "9x^2 + 4"
+constantes = 0
+solucion = "x^3 - x^2 + 2x"
+enunciado = ""
+fuente = "Ejercicio tipo de calculo: y'' + 3y' = 9x^2 + 4 (r = 0 es raiz: polinomio multiplicado por x)"
+pistas = ["Lado derecho polinomio de grado 2, pero la caracteristica r^2 + 3r = 0 tiene la raiz r = 0.", "Hay resonancia: la prueba es x(Ax^2 + Bx + C), grado 3, sin termino independiente.", "Deriva dos veces, sustituye e iguala los coeficientes de x^2, x y 1."]
+larga = true
+[[ficha]]
+id = "T2X-YP-SENCOS"
+tipo = "edo_solucion"
+tecnica = "forma_yp"
+edo = "ypp + 2*yp + 2*y"
+rhs = "cos(x)"
+constantes = 0
+solucion = "cos(x)/5 + 2sen(x)/5"
+enunciado = ""
+fuente = "Ejercicio tipo de calculo: y'' + 2y' + 2y = cos x (raices -1 ± i, sin resonancia)"
+pistas = ["Lado derecho cos x: la prueba lleva coseno y tambien seno, A cos x + B sen x.", "Raices -1 ± i; el coseno de frecuencia 1 no resuena, no se multiplica por x.", "Sustituye e iguala los coeficientes de cos x y de sen x: A + 2B = 1, B - 2A = 0."]
+larga = true
+[[ficha]]
+id = "T2X-YP-COSRES"
+errores = [{ forma = "cos(({w})x)", mensaje = "Resonancia: cos(({w})x) ya es solucion de la homogenea (raices ±({w})i). Prueba y_p = x·(A cos(({w})x) + B sen(({w})x))." }, { forma = "sen(({w})x)", mensaje = "Resonancia: sen(({w})x) ya es solucion de la homogenea. Multiplica la prueba por x." }]
+tipo = "edo_solucion"
+tecnica = "forma_yp"
+edo = "ypp + ({q})*y"
+rhs = "({c}) cos(({w})x)"
+constantes = 0
+solucion = "x sen(({w})x)"
+enunciado = ""
+params = { w = [2, 3, 4, 5] }
+derivados = { q = "({w})^2", c = "2*({w})" }
+fuente = "Familia propia"
+pistas = ["Las raices son ±({w})i y el lado derecho oscila con frecuencia {w}: hay resonancia.", "La prueba es x (A cos({w}x) + B sen({w}x)).", "Al sustituir, los terminos con x se cancelan; queda solo 2·{w}·(-A sen({w}x) + B cos({w}x))."]
+
+[[ficha]]
+id = "T2X-YP-POLEXP2"
+tipo = "edo_solucion"
+tecnica = "forma_yp"
+edo = "ypp - 6*yp + 9*y"
+rhs = "(6x + 2) e^(3x)"
+constantes = 0
+solucion = "(x^3 + x^2) e^(3x)"
+enunciado = ""
+fuente = "Ejercicio tipo de calculo: y'' - 6y' + 9y = (6x + 2)e^(3x) (resonancia doble con polinomio)"
+pistas = ["Lado derecho: polinomio de grado 1 por e^(3x), y r = 3 es raiz doble.", "Resonancia doble: y_p = x^2 (Ax + B) e^(3x).", "Escribe y = e^(3x) u: la EDO queda u'' = 6x + 2; integra dos veces."]
+larga = true
+[[ficha]]
+id = "T2X-YP-POLEXP1"
+tipo = "edo_solucion"
+tecnica = "forma_yp"
+edo = "ypp - 4*yp + 3*y"
+rhs = "(4x + 4) e^(3x)"
+constantes = 0
+solucion = "(x^2 + x) e^(3x)"
+enunciado = ""
+fuente = "Ejercicio tipo de calculo: y'' - 4y' + 3y = (4x + 4)e^(3x) (resonancia simple con polinomio)"
+pistas = ["Lado derecho: polinomio de grado 1 por e^(3x); las raices son 1 y 3.", "Resonancia simple: y_p = x (Ax + B) e^(3x).", "Con y = e^(3x) u queda u'' + 2u' = 4x + 4; prueba u = Ax^2 + Bx."]
+larga = true
+[[ficha]]
+id = "T2X-YP-XEXP"
+tipo = "edo_solucion"
+tecnica = "forma_yp"
+edo = "ypp + ({s})*yp + ({p})*y"
+rhs = "x e^(({a})x)"
+constantes = 0
+solucion = "x^3 e^(({a})x)/6"
+enunciado = ""
+params = { a = [2, 1, -1, 3] }
+derivados = { s = "-2*({a})", p = "({a})^2" }
+fuente = "Familia propia"
+pistas = ["({a}) es raiz doble de la caracteristica y el polinomio es de grado 1.", "Resonancia doble: y_p = x^2 (Ax + B) e^(({a})x).", "Con y = e^(({a})x) u la EDO se reduce a u'' = x."]
+larga = true
+
+[[ficha]]
+id = "T2X-EU-GEN"
+tipo = "edo_solucion"
+tecnica = "caracteristica"
+edo = "x^2*ypp + ({s})*x*yp + ({p})*y"
+rhs = "0"
+constantes = 2
+solucion = "C1 x^(({r1})) + C2 x^(({r2}))"
+enunciado = ""
+params = { r1 = [3, 2, -1], r2 = [1, -2, 4] }
+derivados = { s = "1 - (({r1}) + ({r2}))", p = "({r1})({r2})" }
+fuente = "Familia propia"
+pistas = ["Es una Euler-Cauchy: x^2 multiplica a y'', x a y' y un numero a y.", "Prueba y = x^r: da r(r - 1) + ({s})r + ({p}) = 0 (x^r sale factor comun).", "Resuelve esa ecuacion en r; cada raiz real da una solucion x^r."]
+
+[[ficha]]
+id = "T2X-EU-PART"
+tipo = "edo_solucion"
+tecnica = "forma_yp"
+edo = "x^2*ypp - 3*x*yp + 3*y"
+rhs = "x^3"
+constantes = 0
+solucion = "x^3 ln(x)/2"
+enunciado = ""
+fuente = "Ejercicio tipo de calculo: x^2 y'' - 3x y' + 3y = x^3 (Euler con resonancia: x^3 es solucion de la homogenea)"
+pistas = ["El lado derecho x^3 es ya solucion de la homogenea (raices 1 y 3).", "Hay resonancia: se multiplica por ln x. Prueba y_p = A x^3 ln x.", "Calcula y' = A(3x^2 ln x + x^2), y'' = A(6x ln x + 5x) y sustituye: los terminos con ln x se cancelan."]
+larga = true
+[[ficha]]
+id = "T2X-PVI-COMP"
+previa = "AL-SIS2C"
+tipo = "calculo"
+tecnica = "pvi"
+enunciado = "y'' + ({s})y' + ({p})y = 0, con y(0) = 0, y′(0) = 1. Escribe la solucion del PVI"
+funciones = {}
+calculo = "exp(({a})*x)*sin(({b})*x)/({b})"
+solucion = "e^(({a})x) sen(({b})x)/({b})"
+params = { a = [-1, 1, -2], b = [2, 3] }
+derivados = { s = "-2*({a})", p = "({a})^2 + ({b})^2" }
+fuente = "Familia propia"
+pistas = ["Raices complejas ({a}) ± ({b})i: y = e^(({a})x)(C1 cos({b}x) + C2 sen({b}x)).", "y(0) = 0 da C1 = 0. Despues deriva y usa y'(0) = 1.", "Con C1 = 0, y' en x = 0 vale ({b})·C2; igualalo a 1."]
+larga = true
+
+[[ficha]]
+id = "T2X-PVI-REAL"
+previa = "AL-SIS2"
+errores = [{ respuesta = "C1 e^(({r1})x) + C2 e^(({r2})x)", mensaje = "Es la general; falta usar y(0) = 1 e y'(0) = 0 para hallar C1 y C2 (sistema 2x2)." }]
+tipo = "calculo"
+tecnica = "pvi"
+enunciado = "y'' + ({s})y' + ({p})y = 0, con y(0) = 1, y′(0) = 0. Escribe la solucion del PVI"
+funciones = {}
+calculo = "(({r2})*exp(({r1})*x) - ({r1})*exp(({r2})*x))/(({r2}) - ({r1}))"
+solucion = "(({r2}) e^(({r1})x) - ({r1}) e^(({r2})x))/(({r2}) - ({r1}))"
+params = { r1 = [1, 2, -1], r2 = [3, -2, 4] }
+derivados = { s = "-(({r1}) + ({r2}))", p = "({r1})({r2})" }
+fuente = "Familia propia"
+pistas = ["Dos raices reales distintas: y = C1 e^(r1 x) + C2 e^(r2 x).", "Dos condiciones: C1 + C2 = 1 y r1 C1 + r2 C2 = 0.", "Resuelve el sistema 2x2 para C1 y C2 y sustituye."]
+larga = true
+
+[[ficha]]
+id = "T2X-PVI-ORD3"
+tipo = "calculo"
+tecnica = "pvi"
+enunciado = "y''' + 2y'' + 4y' + 8y = 0, con y(0) = 1, y′(0) = 0, y″(0) = 0. Escribe la solucion del PVI"
+funciones = {}
+calculo = "exp(-2*x)/2 + cos(2*x)/2 + sin(2*x)/2"
+solucion = "e^(-2x)/2 + cos(2x)/2 + sen(2x)/2"
+fuente = "Ejercicio tipo de calculo: orden 3 con tres condiciones iniciales (raices -2, ±2i)"
+pistas = ["Cubica: raices -2, 2i, -2i, asi que y = C1 e^(-2x) + C2 cos 2x + C3 sen 2x.", "Tres condiciones: y(0), y'(0), y''(0). Deriva dos veces antes de sustituir.", "Sale C1 + C2 = 1, -2C1 + 2C3 = 0, 4C1 - 4C2 = 0."]
+larga = true
+[[ficha]]
+id = "T2X-YP-ESTAC"
+tipo = "edo_solucion"
+tecnica = "forma_yp"
+edo = "ypp + 2*yp + 5*y"
+rhs = "10 sen(x) + 5"
+constantes = 0
+solucion = "2sen(x) - cos(x) + 1"
+enunciado = ""
+fuente = "Ejercicio tipo de calculo: y'' + 2y' + 5y = 10 sen x + 5; el transitorio muere y queda la solucion estacionaria (esta y_p)"
+pistas = ["Lado derecho seno + constante: prueba A sen x + B cos x + D.", "Raices -1 ± 2i: no coinciden con ±i, asi que no hay resonancia.", "Constante: 5D = 5. Seno y coseno: 4A - 2B = 10 y 2A + 4B = 0."]
+larga = true
+[[ficha]]
+id = "T2X-VAR-GEN"
+tipo = "edo_solucion"
+tecnica = "wronskiano"
+edo = "ypp - 3*yp + 2*y"
+rhs = "x e^x"
+constantes = 2
+solucion = "C1 e^x + C2 e^(2x) - (x^2/2 + x) e^x"
+enunciado = ""
+fuente = "Ejercicio tipo de calculo: y'' - 3y' + 2y = x e^x por variacion de constantes"
+pistas = ["Base de la homogenea: e^x, e^(2x). Wronskiano W = e^(3x).", "Variacion: u1' = -y2 f/W = -x, u2' = y1 f/W = x e^(-x); aqui f = x e^x.", "Integra u1' y u2' (la segunda por partes) y arma y = C1 y1 + C2 y2 + u1 y1 + u2 y2."]
+larga = true
+[[ficha]]
+id = "T2X-EU-BASE"
+tipo = "edo_solucion"
+tecnica = "wronskiano"
+edo = "ypp + yp/x - y/x^2"
+rhs = "3"
+constantes = 2
+solucion = "C1 x + C2/x + x^2"
+enunciado = ""
+fuente = "Ejercicio tipo de calculo: y'' + y'/x - y/x^2 = 3, base homogenea {x, 1/x} dada (variacion de constantes)"
+pistas = ["Base dada: x y 1/x. La EDO ya esta normalizada (y'' con coeficiente 1), f = 3.", "W = -2/x. u1' = -y2·f/W = 3/2, u2' = y1·f/W = -3x^2/2.", "Integra: u1 = 3x/2, u2 = -x^3/2; y_p = (3x/2)·x - (x^3/2)·(1/x) = x^2."]
+larga = true
+[[ficha]]
+id = "T2X-WR-POT"
+tipo = "calculo"
+tecnica = "wronskiano"
+enunciado = "Calcula el wronskiano W = y1·y2' - y1'·y2 de y1 = x^({k}), y2 = x^({m})"
+funciones = { f = "x^({k})", g = "x^({m})" }
+calculo = "f*diff(g, x) - diff(f, x)*g"
+params = { k = [3, 2, 1], m = [-1, -2] }
+fuente = "Familia propia"
+pistas = ["W = y1 y2' - y1' y2; deriva cada potencia con la regla de la potencia, como (x^5)' = 5x^4.", "y1' = {k}·x^({k} - 1) e y2' = ({m})·x^(({m}) - 1).", "Resta y simplifica: los dos terminos son potencias de x con el mismo exponente."]

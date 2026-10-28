@@ -1,0 +1,312 @@
+# Ejemplos resueltos: uno por tecnica. Se ensenan la primera vez que sale una
+# tecnica que nunca se ha practicado (practica.py).
+# El enunciado y el resultado se toman de la ficha (`ficha` + `params`), asi la
+# clave ya esta verificada con sympy; aqui solo estan los pasos y la idea.
+#
+# Formulas: en `idea` y `pasos`, cada formula va entre $...$ escrita con
+# la notacion de clase de siempre (x^2, sen x, ln|x|, e^(2x), √(x+1), ∫ ... dx,
+# ∂M/∂y, y'', C1, y_p), NO en LaTeX. La ventana la pinta con KaTeX (fracciones de
+# verdad); la terminal y la salida JSON la ensenan sin los $. Lo marcado no
+# lleva palabras. Prueba: tests/test_latex.py (TestEjemplos).
+
+[[ejemplo]]
+tecnica = "algebra"
+ficha = "AL-FRAC"
+params = { n = 1, p = 1, q = -1 }
+idea = "Cuando una fraccion tiene dos factores abajo y quieres separarla en dos fracciones mas faciles."
+pasos = [
+  "Multiplica los dos lados por $(x - 1)(x + 1)$ para quitar los denominadores: $1 = A(x + 1) + B(x - 1)$.",
+  "Da a x el valor 1, que anula el parentesis de B: $1 = A·2$, asi que $A = 1/2$.",
+  "Da a x el valor -1, que anula el parentesis de A: $1 = B·(-2)$, asi que $B = -1/2$.",
+  "Escribe los dos valores: $A = 1/2, B = -1/2$.",
+]
+
+[[ejemplo]]
+tecnica = "comprobar_solucion"
+ficha = "T2-OP-XEXP"
+params = { a = 1 }
+idea = "Para saber si una funcion resuelve una EDO: derivas, sustituyes y miras si todo se cancela."
+pasos = [
+  "Deriva una vez: $y' = e^x + x e^x = (x + 1) e^x$.",
+  "Deriva otra vez: $y'' = e^x + (x + 1) e^x = (x + 2) e^x$.",
+  "Sustituye en $y'' - 2y' + y$: $(x + 2) e^x - 2(x + 1) e^x + x e^x$.",
+  "Saca factor comun $e^x$: $(x + 2 - 2x - 2 + x) e^x = 0 · e^x = 0$.",
+]
+
+[[ejemplo]]
+tecnica = "pvi"
+ficha = "T2X-PVI-REAL"
+params = { r1 = 1, r2 = 3 }
+idea = "Cuando la EDO trae condiciones iniciales y hay que fijar $C1$ y $C2$."
+pasos = [
+  "Ecuacion caracteristica: $r^2 - 4r + 3 = 0$, que se factoriza como $(r - 1)(r - 3) = 0$, asi que $r = 1$ y $r = 3$.",
+  "Solucion general: $y = C1 e^x + C2 e^(3x)$.",
+  "Con $y(0) = 1$: $C1 + C2 = 1$.",
+  "Deriva, $y' = C1 e^x + 3 C2 e^(3x)$; con $y'(0) = 0$: $C1 + 3 C2 = 0$.",
+  "Resuelve el sistema: $C2 = -1/2$ y $C1 = 3/2$. Sustituye: $y = (3/2)e^x - (1/2)e^(3x)$; sacando $e^x/2$ factor comun queda $(3 - e^(2x))·e^x/2$.",
+]
+
+[[ejemplo]]
+tecnica = "wronskiano"
+ficha = "T2-WR-EXP"
+params = { a = 1, b = 3 }
+idea = "Para saber si dos soluciones son independientes: si W no es cero, lo son."
+pasos = [
+  "Escribe la formula: $W = y1·y2' - y1'·y2$.",
+  "Deriva: $y1' = e^x$ e $y2' = 3 e^(3x)$.",
+  "Sustituye: $W = e^x · 3 e^(3x) - e^x · e^(3x)$.",
+  "Suma los exponentes: $W = 3 e^(4x) - e^(4x) = 2 e^(4x)$.",
+]
+
+[[ejemplo]]
+tecnica = "lineal"
+ficha = "P-EXPLIN"
+params = { a = 2 }
+idea = "Cuando dentro de la funcion no hay solo x, sino algo como $2x$ o $5x - 2$."
+pasos = [
+  "La tabla dice que la integral de $e^u$ es $e^u$, y aqui el exponente es $2x$, no x.",
+  "Si derivaras $e^(2x)$ saldria $2 e^(2x)$: sobra un factor 2.",
+  "Para compensarlo, divide por 2 (el numero que multiplica a x).",
+  "Resultado: $e^(2x)/2$, mas la constante C.",
+]
+
+[[ejemplo]]
+tecnica = "partes"
+ficha = "PA-XEXP"
+params = { a = 1 }
+idea = "Cuando multiplicas dos tipos de funciones distintos (un polinomio por una exponencial o un seno)."
+pasos = [
+  "Elige $u = x$ (al derivar se simplifica) y $dv = e^x dx$.",
+  "Entonces $du = dx$ y $v = e^x$.",
+  "Aplica la formula: $∫u dv = u·v - ∫v du$, es decir $x e^x - ∫e^x dx$.",
+  "La integral que queda es facil: $∫e^x dx = e^x$.",
+  "Resultado: $x e^x - e^x = (x - 1) e^x$, mas C.",
+]
+
+[[ejemplo]]
+tecnica = "sustitucion"
+ficha = "S-XEXP"
+params = { a = 1 }
+idea = "Cuando ves una funcion y, multiplicando, la derivada de lo que hay dentro."
+pasos = [
+  "Dentro de la exponencial esta $x^2$. Llamala $u = x^2$.",
+  "Su derivada es $du = 2x dx$, asi que $x dx = du/2$.",
+  "Cambia todo a u: $∫e^u du/2 = (1/2)∫e^u du$.",
+  "Integra: $(1/2) e^u$. Deshaz el cambio: $e^(x^2)/2$, mas C.",
+]
+
+[[ejemplo]]
+tecnica = "tabla"
+ficha = "I03"
+params = {}
+idea = "Cuando la integral se puede rescribir con potencias de x o con funciones de la tabla."
+pasos = [
+  "Separa la fraccion en dos: $(x + 2)/x = x/x + 2/x$.",
+  "Simplifica: $x/x = 1$, asi que queda $1 + 2/x$.",
+  "Integra cada trozo con la tabla: $∫1 dx = x$ y $∫(1/x) dx = ln|x|$.",
+  "Resultado: $x + 2 ln|x|$, mas C.",
+]
+
+[[ejemplo]]
+tecnica = "cadena"
+ficha = "D03"
+params = {}
+idea = "Cuando hay una funcion dentro de otra: derivas la de fuera y multiplicas por la derivada de lo de dentro."
+pasos = [
+  "Identifica lo de dentro: $u = -x^2/2$. La funcion de fuera es $e^u$.",
+  "Derivada de fuera, dejando u igual: $e^u$.",
+  "Derivada de dentro: $u' = -x$.",
+  "Multiplica las dos: $e^(-x^2/2) · (-x) = -x e^(-x^2/2)$.",
+]
+
+[[ejemplo]]
+tecnica = "cociente"
+ficha = "DCO-EXP"
+params = { a = 1 }
+idea = "Cuando una funcion esta dividida por otra que tambien depende de x."
+pasos = [
+  "Llama $u = e^x$ (arriba) y $v = x + 1$ (abajo). Entonces $u' = e^x$ y $v' = 1$.",
+  "Formula: $(u' v - u v') / v^2$.",
+  "Sustituye: $(e^x (x + 1) - e^x · 1) / (x + 1)^2$.",
+  "Simplifica el numerador: $x e^x + e^x - e^x = x e^x$. Resultado: $x e^x/(x + 1)^2$.",
+]
+
+[[ejemplo]]
+tecnica = "inversas"
+ficha = "DI-ATAN"
+params = { a = 2 }
+idea = "Cuando aparece arctan o arcsen: su derivada es una fraccion que ya conoces."
+pasos = [
+  "Recuerda: la derivada de $arctan(u)$ es $u'/(1 + u^2)$.",
+  "Aqui $u = 2x$, y su derivada es $u' = 2$.",
+  "Sustituye: $2/(1 + (2x)^2)$.",
+  "Desarrolla el cuadrado: $(2x)^2 = 4x^2$. Resultado: $2/(4x^2 + 1)$.",
+]
+
+[[ejemplo]]
+tecnica = "logaritmica"
+ficha = "DL-XSEN"
+params = {}
+idea = "Cuando la x esta a la vez en la base y en el exponente, como $x^(sen x)$."
+pasos = [
+  "Llama $y = x^(sen x)$ y toma logaritmos a los dos lados: $ln y = sen x ln x$.",
+  "Deriva a los dos lados. A la izquierda: $y'/y$. A la derecha, con la regla del producto: $cos x ln x + sen x/x$.",
+  "Despeja: $y' = y (cos x ln x + sen x/x)$.",
+  "Vuelve a poner $y = x^(sen x)$: $y' = x^(sen x) (cos x ln x + sen x/x)$.",
+]
+
+[[ejemplo]]
+tecnica = "potencia"
+ficha = "D01"
+params = {}
+idea = "La regla basica: la x elevada a un numero."
+pasos = [
+  "Mira el exponente: es 4.",
+  "Pon el 4 delante, multiplicando, y a la vez resta 1 al exponente: $4 · x^(4-1)$.",
+  "Calcula el nuevo exponente: $4 - 1 = 3$.",
+  "Resultado: $4x^3$.",
+]
+
+[[ejemplo]]
+tecnica = "producto"
+ficha = "DPR-XEXP"
+params = { n = 1, a = 1 }
+idea = "Cuando dos funciones con x se multiplican."
+pasos = [
+  "Llama $u = x$ y $v = e^x$. Entonces $u' = 1$ y $v' = e^x$.",
+  "Formula: $(u v)' = u' v + u v'$.",
+  "Sustituye: $1 · e^x + x · e^x$.",
+  "Resultado: $e^x + x e^x$ (puedes sacar $e^x$ factor comun).",
+]
+
+[[ejemplo]]
+tecnica = "caracteristica"
+ficha = "T2-CAR-REAL"
+params = { r1 = 1, r2 = -2 }
+idea = "En una EDO lineal con coeficientes constantes, $y = e^(rx)$ la convierte en un polinomio en r."
+pasos = [
+  "Viene de la EDO $y'' + y' - 2y = 0$: con $y = e^(rx)$, cada derivada saca una r ($y' = r e^(rx)$, $y'' = r^2 e^(rx)$). Divide por $e^(rx)$ y queda $r^2 + r - 2 = 0$.",
+  "Busca dos numeros que multipliquen -2 y sumen 1: son 2 y -1.",
+  "Factoriza: $(r + 2)(r - 1) = 0$.",
+  "Cada factor da una raiz: $r = -2$ y $r = 1$.",
+]
+
+[[ejemplo]]
+tecnica = "forma_yp"
+ficha = "T2X-YP-EXP"
+params = { k = 4 }
+idea = "Para una solucion particular, pruebas una funcion con la misma forma que el lado derecho."
+pasos = [
+  "Antes de probar, mira las raices de la homogenea, $r^2 - 5r + 6 = 0$: son 2 y 3. El 4 del lado derecho no esta entre ellas, asi que no hay resonancia.",
+  "El lado derecho es $e^(4x)$: prueba $y_p = A e^(4x)$.",
+  "Deriva, $y_p' = 4A e^(4x)$ e $y_p'' = 16A e^(4x)$, y sustituye: $16A e^(4x) - 20A e^(4x) + 6A e^(4x) = e^(4x)$.",
+  "Queda $2A = 1$, asi que $A = 1/2$. Resultado: $y_p = e^(4x)/2$.",
+]
+
+[[ejemplo]]
+tecnica = "exactitud"
+ficha = "EX-POLI"
+params = { a = 2, b = 1, c = 3 }
+idea = "Una ecuacion $M dx + N dy = 0$ es exacta si $∂M/∂y = ∂N/∂x$."
+pasos = [
+  "Identifica M (lo que acompana a dx) $= 2xy^2 + 1$ y N (lo que acompana a dy) $= 2x^2 y + 3y$.",
+  "Deriva M respecto de y, con x como numero: $∂M/∂y = 4xy$.",
+  "Deriva N respecto de x, con y como numero: $∂N/∂x = 4xy$.",
+  "Son iguales, asi que la ecuacion es exacta.",
+]
+
+[[ejemplo]]
+tecnica = "potencial"
+ficha = "PO-POLI"
+params = { a = 1, b = 1, c = 2 }
+idea = "Si la ecuacion es exacta, existe $F(x, y)$ con $F_x = M$ y $F_y = N$, y la solucion es $F = C$."
+pasos = [
+  "Comprueba que es exacta: $∂M/∂y = 4xy = ∂N/∂x$.",
+  "Integra M respecto de x (con y fija): $F = x^2 y^2 + x + φ(y)$. La «constante» de integrar en x puede llevar y, porque al derivar respecto de x desaparece: por eso es $φ(y)$ y no C.",
+  "Deriva F respecto de y y compara con N: $2x^2 y + φ'(y) = 2x^2 y + 2$, asi que $φ'(y) = 2$.",
+  "Integra: $φ(y) = 2y$. Resultado: $F(x, y) = x^2 y^2 + x + 2y$.",
+]
+
+[[ejemplo]]
+tecnica = "constante"
+ficha = "PC-POLI-X"
+params = { a = 3, b = 1, c = 2 }
+idea = "Con dos letras, derivas respecto de una y la otra la tratas como un numero cualquiera."
+pasos = [
+  "Derivas respecto de x, asi que y es un numero. Para verlo, pon $y = 2$: $3x^2·2 + x·2^3 + 2·2 = 6x^2 + 8x + 4$.",
+  "Deriva eso como siempre, con una sola letra: $12x + 8$ (el 4 suelto da 0).",
+  "Vuelve a poner y donde estaba el 2: $12x = 3·2·2·x$ es $6xy$, y $8 = 2^3$ es $y^3$.",
+  "El 4 venia de $2y$, que no tiene x: por eso no queda nada de el. Resultado: $6xy + y^3$.",
+]
+
+[[ejemplo]]
+tecnica = "parcial_cadena"
+ficha = "PP-EXY-X"
+params = { a = 1 }
+idea = "Una parcial que ademas necesita la regla de la cadena (exponenciales, senos...)."
+pasos = [
+  "Derivas respecto de x, asi que y es un numero. Dentro de la exponencial esta $u = xy$.",
+  "La derivada de $e^u$ es $e^u$; falta multiplicar por la derivada de u respecto de x.",
+  "Como y es un numero, la derivada de $xy$ respecto de x es y.",
+  "Resultado: $y e^(xy)$.",
+]
+
+[[ejemplo]]
+tecnica = "cuadrado"
+ficha = "C-ATAN"
+params = { h = 1, k = 1 }
+idea = "Cuando abajo hay un polinomio de grado 2 sin raices reales: completa el cuadrado y sale un arctan."
+pasos = [
+  "Completa el cuadrado: $x^2 - 2x + 2 = (x - 1)^2 + 1$.",
+  "La integral queda $∫ 1/((x - 1)^2 + 1) dx$.",
+  "Es la forma de la tabla $∫ 1/(u^2 + 1) du = arctan(u)$, con $u = x - 1$ y $du = dx$.",
+  "Resultado: $arctan(x - 1)$, mas C.",
+]
+
+[[ejemplo]]
+tecnica = "irracionales"
+ficha = "IR-RAIZ"
+params = {}
+idea = "Cuando hay una raiz que molesta: se cambia la variable para que desaparezca."
+pasos = [
+  "Llama $t = √(x+4)$. Entonces $x = t^2 - 4$ y $dx = 2t dt$.",
+  "Sustituye: $∫ 2t dt / ((t^2 - 4) t) = ∫ 2/(t^2 - 4) dt$ (la raiz ya no esta).",
+  "Descompon en fracciones simples: $2/(t^2 - 4) = (1/2)/(t - 2) - (1/2)/(t + 2)$.",
+  "Integra: $(1/2) ln|t - 2| - (1/2) ln|t + 2|$. Deshaz el cambio con $t = √(x+4)$.",
+]
+
+[[ejemplo]]
+tecnica = "logaritmo"
+ficha = "LG-CUAD"
+params = {}
+idea = "Cuando arriba esta (casi) la derivada de lo que hay abajo, sale un logaritmo."
+pasos = [
+  "Mira el denominador: $x^2 + 9$. Su derivada es $2x$.",
+  "El numerador es justo $2x$: la integral tiene la forma $∫u'/u$.",
+  "Esa forma siempre da $ln|u|$.",
+  "Como $x^2 + 9$ es siempre positivo, no hacen falta barras. Resultado: $ln(x^2 + 9)$, mas C.",
+]
+
+[[ejemplo]]
+tecnica = "racionales"
+ficha = "R-DOS"
+params = { a = 1, b = -1 }
+idea = "Cuando abajo hay un producto de factores, se separa en fracciones simples."
+pasos = [
+  "Separa: $1/((x - 1)(x + 1)) = A/(x - 1) + B/(x + 1)$.",
+  "Multiplica los dos lados por $(x - 1)(x + 1)$: $1 = A(x + 1) + B(x - 1)$.",
+  "Con $x = 1$ se anula B: $1 = 2A$, asi que $A = 1/2$. Con $x = -1$ se anula A: $1 = -2B$, asi que $B = -1/2$.",
+  "Cada fraccion es de tabla: $∫ A/(x - a) dx = A ln|x - a|$. Resultado: $(1/2) ln|x - 1| - (1/2) ln|x + 1|$, mas C.",
+]
+
+[[ejemplo]]
+tecnica = "trigonometricas"
+ficha = "T-COS2"
+params = {}
+idea = "Cuando hay potencias de seno o coseno: se baja la potencia con una identidad."
+pasos = [
+  "Usa la identidad $cos^2(x) = (1 + cos(2x))/2$.",
+  "La integral queda $∫(1/2) dx + ∫(cos(2x)/2) dx$.",
+  "La primera da $x/2$. En la segunda, $∫cos(2x) dx = sen(2x)/2$ (se divide por el 2 de dentro) y, con el $1/2$ de delante, queda $sen(2x)/4$.",
+  "Resultado: $x/2 + sen(2x)/4$, mas C.",
+]

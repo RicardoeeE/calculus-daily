@@ -1,0 +1,76 @@
+# Grafo de tecnicas (repeticion implicita): cada tecnica lista las que
+# CONTIENE, solo un nivel (no se encadena). Al acertar una ficha de la tecnica de la
+# izquierda, el motor da por repasada (suave) una ficha vencida de cada tecnica contenida.
+# Todo nombre debe ser una tecnica real de fichas/*.toml y no puede haber ciclos
+# (calculo/fichas.py, cargar_grafo). Ante la duda, una arista no se pone.
+
+[contiene]
+
+# Por partes (∫ u dv = u·v - ∫ v du) se practica de verdad: derivar u (x^n, ln x: la regla
+# de la potencia) e integrar dv, casi siempre e^(ax), sen(ax) o cos(ax) (cambio lineal).
+# La regla del producto no se aplica al resolver.
+partes = [
+  "lineal",    # v = ∫ e^(ax) dx, ∫ cos(ax) dx... (PA-XEXP, PA-XCOS, PA-XSEN)
+  "potencia",  # du = (x^n)' dx, (ln x)' = 1/x (PA-XNLN, PA-LNLIN)
+]
+
+# la sustitucion es la regla de la cadena al reves
+sustitucion = [
+  "cadena",
+]
+
+# derivar parcialmente una funcion compuesta o un producto con la otra letra fija
+parcial_cadena = [
+  "cadena",    # f(g(x, y)): derivar fuera y dentro
+  "producto",  # x e^y y similares
+]
+
+# M_y y N_x son derivadas parciales simples
+exactitud = [
+  "constante",
+]
+
+# F_x = M y F_y = N: se derivan parcialmente al comprobar y al ajustar la funcion de y
+potencial = [
+  "constante",
+]
+
+# comprobar que y = x e^(ax) cumple la EDO exige derivar productos y exponenciales compuestas
+comprobar_solucion = [
+  "producto",
+  "cadena",
+]
+
+# el wronskiano deriva exponenciales e^(ax): cadena
+wronskiano = [
+  "cadena",
+]
+
+# el problema de valores iniciales empieza con la ecuacion caracteristica. Acaba con un
+# sistema 2x2 para C1 y C2, pero «algebra» no va aqui: el grafo aplazaria la ficha
+# de algebra menos recordada, que puede ser AL-TRIG o AL-FRAC, ajenas al PVI. Esa relacion
+# ya la lleva `previa` (T2X-PVI-REAL -> AL-SIS2, T2X-PVI-COMP -> AL-SIS2C).
+pvi = [
+  "caracteristica",
+]
+
+# la forma de la solucion particular se decide mirando las raices de la caracteristica
+forma_yp = [
+  "caracteristica",
+]
+
+# derivacion logaritmica: se toma ln (producto de f por ln g) y se deriva con cadena
+logaritmica = [
+  "cadena",
+  "producto",
+]
+
+# las fracciones simples de una racional se integran como logaritmos
+racionales = [
+  "logaritmo",
+]
+
+# la integral irracional (p. ej. 1/(x raiz(x+1))) se resuelve con la sustitucion u = raiz
+irracionales = [
+  "sustitucion",
+]

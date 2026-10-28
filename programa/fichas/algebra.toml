@@ -1,0 +1,177 @@
+# Algebra previa: el calentamiento de cada sesion (1 al dia, 1-2 min).
+# Se responde con valores separados por comas, en el orden de `valores`
+# (vale «3, 4» o «h = 3, k = 4»). La `identidad` comprueba la clave.
+
+[[ficha]]
+id = "AL-CUAD"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Completa el cuadrado: x^2 + ({b})x + ({c}) = (x - h)^2 + k.  Escribe h, k"
+params = { h = [1, 2, 3, -1, -2, 4], k = [1, 4, 9, 2] }
+derivados = { b = "-2*({h})", c = "({h})^2 + ({k})" }
+valores = { h = "{h}", k = "{k}" }
+identidad = ["x^2 + ({b})x + ({c})", "(x - ({h}))^2 + ({k})"]
+fuente = "Familia propia (completar el cuadrado; prepara arctan y Laplace)"
+pistas = ["h es la mitad del coeficiente de x, cambiado de signo.", "Desarrolla (x - h)^2 = x^2 - 2hx + h^2 y compara con el polinomio.", "Divide ({b}) entre 2 y cambiale el signo: eso es h. Despues k = ({c}) - h^2."]
+
+[[ficha]]
+id = "AL-FRAC"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Fracciones simples: ({n})/((x - ({p}))(x - ({q}))) = A/(x - ({p})) + B/(x - ({q})).  Escribe A, B"
+params = { n = [1, 2, 3, 5], p = [1, 2, 3], q = [-1, -2, 0] }
+valores = { A = "({n})/(({p}) - ({q}))", B = "({n})/(({q}) - ({p}))" }
+identidad = ["({n})/((x - ({p}))(x - ({q})))", "({A})/(x - ({p})) + ({B})/(x - ({q}))"]
+fuente = "Familia propia (fracciones simples, Laplace inversa)"
+pistas = ["Multiplica todo por (x - ({p}))(x - ({q})).", "Queda ({n}) = A(x - ({q})) + B(x - ({p})).", "Da a x el valor ({p}) para hallar A, y ({q}) para hallar B."]
+
+[[ficha]]
+id = "AL-DIV"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Divide (x^2 + ({b})x + ({c}))/(x - ({r})) = x + q + R/(x - ({r})).  Escribe q, R"
+params = { b = [1, -3, 4, 2], c = [1, -5, 3], r = [1, 2, -1] }
+valores = { q = "({b}) + ({r})", R = "({r})^2 + ({b})({r}) + ({c})" }
+identidad = ["(x^2 + ({b})x + ({c}))/(x - ({r}))", "x + ({q}) + ({R})/(x - ({r}))"]
+fuente = "Familia propia (racionales con grado de arriba >= grado de abajo)"
+pistas = ["Grado de arriba mayor o igual que el de abajo: primero se divide.", "Ruffini con ({r}), o busca q tal que (x - ({r}))(x + q) se parezca al numerador.", "El resto R es el valor del numerador en x = ({r})."]
+
+[[ficha]]
+id = "AL-EXP"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Simplifica e^(({a})x + ({b})) · e^(({c})x) / e^({d}) = e^(m·x + n).  Escribe m, n"
+params = { a = [1, 2, -1], b = [3, -2, 5], c = [1, -3, 2], d = [1, 4, -2] }
+valores = { m = "({a}) + ({c})", n = "({b}) - ({d})" }
+identidad = ["e^(({a})x + ({b})) e^(({c})x) / e^({d})", "e^(({m})x + ({n}))"]
+fuente = "Familia propia (separar e^(a+b-c+d))"
+pistas = ["Multiplicar potencias de la misma base: se suman los exponentes.", "Dividir: se restan los exponentes.", "Junta todo en un solo exponente y agrupa lo que lleva x."]
+
+[[ficha]]
+id = "AL-LOG"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Si ln|y| = ({a})(x + ({b})) + ({c}), entonces |y| = e^n · e^(k·x).  Escribe k, n"
+params = { a = [2, -3, 5, -1, 4], b = [1, 2, -2, 3], c = [1, -1, 2] }
+valores = { k = "{a}", n = "({a})*({b}) + ({c})" }
+identidad = ["({a})(x + ({b})) + ({c})", "({n}) + ({k})x"]
+fuente = "Familia propia (de ln|y| a y en EDOs separables)"
+pistas = ["Reparte el producto, como en 2(x + 5) = 2x + 10.", "Aplica e^ a los dos lados: |y| = e^(ln|y|), y e^(u + v) = e^u · e^v.", "k es lo que multiplica a x; n es todo lo que suma sin x: el producto repartido mas ({c})."]
+
+# ---------- Prerrequisitos ----------
+# Trigonometria, logaritmos y potencias, sistemas 2x2 y cubicas: lo que se da por
+# sabido en integrales y en las EDOs de orden superior. Mismas reglas: valores separados
+# por comas y una `identidad` que comprueba la clave.
+
+[[ficha]]
+id = "AL-TRIG"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Valores notables: sen({ang}) y cos({ang}).  Escribe sen, cos"
+params = { ang = ["0", "π/6", "π/4", "π/3", "π/2"] }
+valores = { sen = "sin({ang})", cos = "cos({ang})" }
+identidad = ["sin({ang})^2 + cos({ang})^2", "({sen})^2 + ({cos})^2"]
+fuente = "prerrequisito: valores trigonometricos notables; salen en las integrales trigonometricas y en las raices complejas"
+pistas = ["Dibuja el triangulo: π/6 (30°) tiene lados 1, √3, 2; π/4 (45°) tiene 1, 1, √2.", "En el triangulo, sen = cateto opuesto/hipotenusa y cos = cateto contiguo/hipotenusa (en 0 y en π/2, piensa en la circunferencia de radio 1).", "El cos de un angulo es el sen de su complementario (π/2 menos el angulo)."]
+
+[[ficha]]
+id = "AL-TAN"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Valor notable: tan({ang}) = sen({ang})/cos({ang}).  Escribe tan"
+params = { ang = ["0", "π/6", "π/4", "π/3"] }
+valores = { tan = "tan({ang})" }
+identidad = ["tan({ang})", "sin({ang})/cos({ang})"]
+fuente = "prerrequisito: tangente de los angulos notables (arctan, sustituciones trigonometricas)"
+pistas = ["tan = sen/cos. Primero saca sen y cos del angulo.", "sen y cos de {ang} salen del triangulo de 30° y 60° (lados 1, √3, 2) o del de 45° (lados 1, 1, √2); en 0, de la circunferencia de radio 1.", "Divide sen entre cos; si queda una raiz abajo, racionaliza (multiplica arriba y abajo por esa raiz)."]
+
+[[ficha]]
+id = "AL-DOBLE"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Angulo doble: ({a})sen^2(x) = A + B cos(2x).  Escribe A, B"
+params = { a = [2, 4, 6, -2, 1, 3] }
+valores = { A = "({a})/2", B = "-({a})/2" }
+identidad = ["({a})sen(x)^2", "({A}) + ({B})cos(2x)"]
+fuente = "prerrequisito: sen^2 x = (1 - cos 2x)/2, la identidad que abre ∫ sen^2 x dx y ∫ sen^4 x dx"
+pistas = ["Se usa cos(2x) = cos^2(x) - sen^2(x) junto con cos^2 + sen^2 = 1.", "Cambia cos^2(x) por 1 - sen^2(x): sale cos(2x) = 1 - 2sen^2(x). Despeja sen^2(x).", "Multiplica por ({a}) lo que te salga al despejar y reparte: A es el numero suelto y B lo que acompana a cos(2x)."]
+
+[[ficha]]
+id = "AL-PITAG"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Si sen(x) = {s} y x esta en el primer cuadrante, cos(x) y tan(x) valen:  escribe cos, tan"
+params = { s = ["3/5", "5/13", "4/5", "12/13", "8/17", "7/25"] }
+valores = { cos = "sqrt(1 - ({s})^2)", tan = "({s})/sqrt(1 - ({s})^2)" }
+identidad = ["({s})^2 + ({cos})^2", "1"]
+fuente = "prerrequisito: sen^2 + cos^2 = 1 (triangulos pitagoricos; sustitucion x = sen t)"
+pistas = ["Usa sen^2(x) + cos^2(x) = 1.", "cos^2(x) = 1 - ({s})^2; en el primer cuadrante el cos es positivo, asi que tomas la raiz positiva.", "tan(x) = sen(x)/cos(x)."]
+
+[[ficha]]
+id = "AL-LNPROP"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Propiedades del logaritmo (x > 0): ln(x^({n}) e^(({m})x)) = A ln(x) + B x.  Escribe A, B"
+params = { n = [2, 3, -1, 4, -2], m = [1, 2, -3, 5, -1] }
+valores = { A = "{n}", B = "{m}" }
+identidad = ["ln(x^({n}) e^(({m})x))", "({A})ln(x) + ({B})x"]
+fuente = "prerrequisito: ln(a^n b) = n ln a + ln b y ln(e^u) = u (integrales logaritmicas y EDOs separables)"
+pistas = ["El logaritmo de un producto es la suma de logaritmos.", "ln(u^5) = 5 ln(u), y ln(e^u) = u.", "Aplica esas reglas a ln(x^({n})) y a ln(e^(({m})x)) por separado: A acompana a ln(x) y B a x."]
+
+[[ficha]]
+id = "AL-LNEXP"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Potencias y logaritmos: e^(ln({a}) + ({b})x) = k e^(m x).  Escribe k, m"
+params = { a = [2, 3, 5, 7], b = [2, -1, 3, -4, 5] }
+valores = { k = "{a}", m = "{b}" }
+identidad = ["e^(ln({a}) + ({b})x)", "({k})e^(({m})x)"]
+fuente = "prerrequisito: e^(ln a + u) = a·e^u, el paso de ln|y| = ... a y = C e^(...) en las EDOs separables"
+pistas = ["e^(u + v) = e^u · e^v.", "e^(ln u) = u, porque e^ y ln son inversas.", "Separa la exponencial en dos factores y simplifica el que lleva ln: k es lo que multiplica y m lo que acompana a x."]
+
+[[ficha]]
+id = "AL-POT"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Potencias: x^({p}) · (x^({q}))^({r}) / x^({s}) = x^n.  Escribe n"
+params = { p = [2, 3, -1, 5], q = [2, 3, -2], r = [2, 3, -1], s = [1, 4, -3] }
+valores = { n = "({p}) + ({q})*({r}) - ({s})" }
+identidad = ["x^({p}) (x^({q}))^({r}) / x^({s})", "x^({n})"]
+fuente = "prerrequisito: reglas de potencias (sumar, restar y multiplicar exponentes) antes de integrar con x^n"
+pistas = ["Misma base: al multiplicar se suman los exponentes y al dividir se restan.", "Una potencia de potencia multiplica los exponentes: (u^2)^5 = u^(2·5) = u^10.", "Calcula primero ({q})·({r}); despues suma ({p}) y resta ({s}). Cuidado con los signos."]
+
+[[ficha]]
+id = "AL-SIS2"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Sistema 2x2 (el PVI de y = C1 e^(r1 x) + C2 e^(r2 x)):  C1 + C2 = a,  r1·C1 + r2·C2 = b,  con r1 = {r1}, r2 = {r2}, a = {a}, b = {b}.  Escribe C1, C2"
+params = { r1 = [1, 2, -1], r2 = [3, -2, 4], a = [1, 0, 2], b = [0, 1, 3, -1] }
+derivados = { C1 = "(({b}) - ({r2})*({a}))/(({r1}) - ({r2}))", C2 = "(({r1})*({a}) - ({b}))/(({r1}) - ({r2}))" }
+valores = { C1 = "{C1}", C2 = "{C2}" }
+identidad = ["({C1})(1 + ({r1})x) + ({C2})(1 + ({r2})x)", "({a}) + ({b})x"]
+fuente = "prerrequisito: sistema 2x2 de las condiciones iniciales de las EDOs de orden 2 (PVI con raices reales distintas)"
+pistas = ["Despeja C2 de la primera ecuacion: C2 = ({a}) - C1.", "Sustituye en la segunda: ({r1})C1 + ({r2})(({a}) - C1) = ({b}); solo queda C1.", "Reparte, deja los C1 a un lado y los numeros al otro, y divide; con C1 ya calculado, C2 = ({a}) - C1."]
+
+[[ficha]]
+id = "AL-SIS2C"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Condiciones iniciales (raices complejas): C1 = a,  α·C1 + β·C2 = b,  con α = {al}, β = {be}, a = {a}, b = {b}.  Escribe C1, C2"
+params = { a = [1, 0, 2, -1], al = [1, -1, 2, -2], be = [2, 3, 4], b = [1, 0, 3, -2] }
+derivados = { C2 = "(({b}) - ({al})*({a}))/({be})" }
+valores = { C1 = "{a}", C2 = "{C2}" }
+identidad = ["({C1})(1 + ({al})x) + ({C2})(({be})x)", "({a}) + ({b})x"]
+fuente = "prerrequisito: y(0) = C1 e y'(0) = αC1 + βC2 en y = e^(αx)(C1 cos βx + C2 sen βx)"
+pistas = ["La primera ecuacion ya te da C1.", "Sustituye C1 en la segunda: ({al})·({a}) + ({be})C2 = ({b}).", "Pasa el ({al})·({a}) al otro lado y divide entre ({be})."]
+
+[[ficha]]
+id = "AL-CUBICA"
+tipo = "algebra"
+tecnica = "algebra"
+enunciado = "Cubica con raices enteras: x^3 + ({b})x^2 + ({c})x + ({d}) = 0.  Escribe sus 3 raices de menor a mayor"
+params = { r1 = [-3, -2, -1], r2 = [1, 2], r3 = [3, 4, 5] }
+derivados = { b = "-(({r1}) + ({r2}) + ({r3}))", c = "({r1})*({r2}) + ({r1})*({r3}) + ({r2})*({r3})", d = "-({r1})*({r2})*({r3})" }
+valores = { x1 = "{r1}", x2 = "{r2}", x3 = "{r3}" }
+identidad = ["x^3 + ({b})x^2 + ({c})x + ({d})", "(x - ({x1}))(x - ({x2}))(x - ({x3}))"]
+fuente = "prerrequisito: factorizar una cubica con una raiz entera (ecuacion caracteristica de orden 3)"
+pistas = ["Prueba con los divisores enteros del termino independiente ({d}).", "Cuando encuentres una raiz r, divide por (x - r) con Ruffini: queda una cuadratica.", "Resuelve la cuadratica y ordena las tres raices de menor a mayor."]

@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cálculo diario</title>
+<link rel="stylesheet" href="katex/katex.min.css">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body data-fase="carga">
+<header class="cabecera">
+  <div class="cabecera-fila">
+    <h1>Sesión de hoy</h1>
+    <span class="cabecera-derecha">
+      <button id="solo-dos" type="button" class="discreto" hidden title="Día mínimo: 2 ejercicios. Con 2 el día cuenta.">Hoy solo 2</button>
+      <span id="progreso-texto" class="progreso-texto"></span>
+    </span>
+  </div>
+  <div class="barra" role="progressbar" aria-label="Progreso de la sesión" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barra">
+    <div class="barra-relleno" id="barra-relleno"></div>
+  </div>
+</header>
+
+<main id="principal">
+  <section id="pantalla-carga" class="pantalla">
+    <p class="tenue">Preparando la sesión…</p>
+  </section>
+
+  <section id="aviso-revision" class="tarjeta suave" hidden>
+    <h2>Revisión de la semana</h2>
+    <ul id="revision-lineas"></ul>
+  </section>
+
+  <section id="pantalla-ejemplo" class="pantalla" hidden>
+    <div class="tarjeta">
+      <p class="etiqueta" id="ejemplo-titulo"></p>
+      <p id="ejemplo-idea" class="idea"></p>
+      <p id="ejemplo-enunciado-antes" class="enunciado-texto"></p>
+      <div id="ejemplo-enunciado" class="enunciado ejemplo-enunciado"></div>
+      <p id="ejemplo-enunciado-despues" class="enunciado-texto"></p>
+      <ol id="ejemplo-pasos" class="pasos"></ol>
+      <div id="ejemplo-campo" class="campo-fila" hidden>
+        <label for="ejemplo-respuesta">Resultado del ejemplo (sin nota ni registro)</label>
+        <div class="fila">
+          <input id="ejemplo-respuesta" type="text" autocomplete="off" spellcheck="false" maxlength="200">
+          <button id="ejemplo-comprobar" type="button">Comprobar</button>
+        </div>
+        <p id="ejemplo-mensaje" class="mensaje" aria-live="polite"></p>
+      </div>
+      <p id="ejemplo-resultado" class="resultado" hidden></p>
+      <div class="acciones">
+        <button id="ejemplo-seguir" type="button" class="principal">Seguir con el ejercicio</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="pantalla-ejercicio" class="pantalla" hidden>
+    <div class="tarjeta">
+      <p class="etiqueta"><span id="ej-etiqueta"></span> · <span id="ej-tecnica"></span></p>
+      <p id="enunciado-antes" class="enunciado-texto"></p>
+      <div id="enunciado" class="enunciado" aria-live="polite"></div>
+      <p id="enunciado-despues" class="enunciado-texto"></p>
+      <p id="como-responder" class="tenue pequeno"></p>
+    </div>
+
+    <div id="bloque-confianza" class="tarjeta" hidden>
+      <p class="pregunta">¿Lo sacas? Elige tu confianza (teclas 1 a 5)</p>
+      <div class="botones-escala" role="group" aria-label="Confianza">
+        <button type="button" data-confianza="1">1<span>ni idea</span></button>
+        <button type="button" data-confianza="2">2<span>lo dudo</span></button>
+        <button type="button" data-confianza="3">3<span>quizá</span></button>
+        <button type="button" data-confianza="4">4<span>creo que sí</span></button>
+        <button type="button" data-confianza="5">5<span>seguro</span></button>
+      </div>
+    </div>
+
+    <div id="bloque-respuesta" class="tarjeta" hidden>
+      <label for="respuesta">Resuelve en papel y escribe solo el resultado</label>
+      <input id="respuesta" type="text" autocomplete="off" spellcheck="false" maxlength="200">
+      <div id="vista-previa" class="vista-previa" data-estado="vacio" aria-live="polite">
+        <span class="tenue">He leído:</span> <span id="vista-previa-contenido" class="vista-previa-contenido"></span>
+      </div>
+      <ul id="avisos-lectura" class="avisos"></ul>
+      <div class="acciones">
+        <button id="comprobar" type="button" class="principal">Comprobar <kbd>Enter</kbd></button>
+        <button id="pista" type="button">Pista</button>
+        <button id="no-se" type="button" hidden>No sé por dónde empezar</button>
+        <button id="ver-solucion" type="button" hidden>Ver la solución</button>
+        <button id="estaba-bien" type="button" hidden>Estaba bien</button>
+        <button id="ver-grafica" type="button" hidden>Ver gráfica</button>
+      </div>
+      <div id="confirmar-solucion" class="confirmar" hidden>
+        <p>¿Seguro? Cuenta como no sabido.</p>
+        <div class="acciones">
+          <button id="solucion-si" type="button">Sí, ver la solución</button>
+          <button id="solucion-no" type="button" class="principal">No, sigo</button>
+        </div>
+      </div>
+      <div id="mensaje" class="mensaje" aria-live="polite"></div>
+      <ol id="pistas" class="pistas"></ol>
+      <p id="solucion-texto" class="solucion" hidden></p>
+    </div>
+
+    <div id="bloque-causa" class="tarjeta" hidden>
+      <p class="pregunta">¿Qué ha pasado? (teclas 1 a 4)</p>
+      <div id="causas" class="botones-lista" role="group" aria-label="Qué ha pasado"></div>
+      <div class="acciones"><button id="causa-saltar" type="button">Saltar</button></div>
+    </div>
+
+    <div id="bloque-hecho" class="tarjeta" hidden>
+      <p id="mensaje-hecho" class="mensaje-hecho" aria-live="polite"></p>
+      <div id="bloque-memoria" hidden>
+        <button id="reescribir" type="button">Reescribirla de memoria (práctica, sin nota)</button>
+        <div id="memoria-campo" hidden>
+          <label for="memoria">La solución, de memoria (no cuenta para la nota)</label>
+          <div class="fila">
+            <input id="memoria" type="text" autocomplete="off" spellcheck="false" maxlength="200">
+            <button id="memoria-comprobar" type="button">Comprobar</button>
+          </div>
+          <p id="memoria-mensaje" class="mensaje" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="acciones"><button id="siguiente" type="button" class="principal">Siguiente <kbd>Enter</kbd></button></div>
+    </div>
+  </section>
+
+  <section id="pantalla-final" class="pantalla" hidden>
+    <div id="final-preguntas" class="tarjeta">
+      <h2>Fin de la sesión</h2>
+      <p class="pregunta">¿Cómo te has sentido hoy? (opcional)</p>
+      <div class="botones-escala" role="group" aria-label="Sensación">
+        <button type="button" data-sensacion="1">1<span>fatal</span></button>
+        <button type="button" data-sensacion="2">2<span>mal</span></button>
+        <button type="button" data-sensacion="3">3<span>normal</span></button>
+        <button type="button" data-sensacion="4">4<span>bien</span></button>
+        <button type="button" data-sensacion="5">5<span>genial</span></button>
+      </div>
+      <label for="comentario">Comentario (opcional)</label>
+      <textarea id="comentario" rows="2" maxlength="1000"></textarea>
+      <label for="queja">¿Alguna queja o comentario? (opcional)</label>
+      <textarea id="queja" rows="2" maxlength="1000"></textarea>
+      <div class="acciones"><button id="terminar" type="button" class="principal">Guardar y terminar</button></div>
+    </div>
+    <div id="final-resumen" class="tarjeta" hidden>
+      <h2>Resumen</h2>
+      <pre id="resumen" class="resumen"></pre>
+      <p id="estado-subida" class="estado-subida" aria-live="polite"></p>
+      <div class="acciones"><button id="salir-final" type="button" class="principal">Cerrar</button></div>
+    </div>
+  </section>
+
+  <section id="pantalla-vacia" class="pantalla" hidden>
+    <div class="tarjeta">
+      <h2 id="vacia-titulo">Hoy ya está todo hecho</h2>
+      <p id="vacia-texto">No queda nada en la cola de hoy. Buen trabajo.</p>
+      <div class="acciones"><button id="salir-vacia" type="button" class="principal">Cerrar</button></div>
+    </div>
+  </section>
+</main>
+
+<div id="aviso" class="aviso" role="alert" hidden></div>
+<div id="saliendo" class="saliendo" hidden><p id="saliendo-texto" aria-live="polite"></p></div>
+<footer class="pie tenue pequeno" id="pie">Enter comprobar · 1–5 confianza · Esc salir</footer>
+
+<script src="katex/katex.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
