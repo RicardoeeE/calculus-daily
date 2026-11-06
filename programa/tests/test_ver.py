@@ -78,7 +78,7 @@ class TestVer(unittest.TestCase):
         inexistente = Path(tempfile.mkdtemp()) / "no-existe"
         cmd, mensaje = ver.comando(self.fichas["I02"].variante(1), inexistente)
         self.assertIsNone(cmd)
-        self.assertEqual(mensaje, "Para ver graficas instala math-plotter junto a calculo-diario")
+        self.assertEqual(mensaje, "Las graficas necesitan math-plotter, que no viene con este repositorio.")
 
     def test_variable_de_entorno(self):
         with mock.patch.dict("os.environ", {"MATH_PLOTTER": str(self.mp)}):
@@ -113,7 +113,7 @@ class TestVer(unittest.TestCase):
         v = self.fichas["I02"].variante(1)
         with mock.patch.dict("os.environ", {"MATH_PLOTTER": str(inexistente)}):
             texto, reg = self._sesion("I02", ["3", "v", v.solucion_texto])
-        self.assertIn("Para ver graficas instala math-plotter junto a calculo-diario", texto)
+        self.assertIn("Las graficas necesitan math-plotter, que no viene con este repositorio.", texto)
         self.assertIn("Correcto.", texto)
         self.assertEqual(reg.call_args.args[3], 0)   # pistas = 0
 

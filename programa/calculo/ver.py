@@ -21,7 +21,7 @@ from .fichas import _numero
 from .rutas import RAIZ
 
 POR_DEFECTO = RAIZ.parent / "math-plotter"
-SIN_PLOTTER = "Para ver graficas instala math-plotter junto a calculo-diario"
+SIN_PLOTTER = "Las graficas necesitan math-plotter, que no viene con este repositorio."
 SIN_GRAFICA = "Esta ficha no tiene una grafica sencilla que ensenar."
 OTRA_LETRA = 2   # valor de la letra que no se deriva en una parcial
 
