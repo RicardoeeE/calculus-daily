@@ -1,6 +1,6 @@
 # Design notes
 
-How calculo-diario works inside, and why it is built this way. The code and the exercise files are in Spanish (it was built for a Spanish engineering course); this document is the English map.
+How Calculus Daily works inside, and why it is built this way. The code and the exercise files are in Spanish (it was built for a Spanish engineering course); this document is the English map.
 
 ## 1. The idea
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-# ∫ calculo-diario
+# ∫ Calculus Daily
 
 **Ten minutes of calculus a day, scheduled by FSRS and checked by SymPy — offline, on your own machine.**
 

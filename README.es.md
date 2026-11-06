@@ -1,6 +1,6 @@
 <div align="center">
 
-# ∫ calculo-diario
+# ∫ Calculus Daily
 
 **Diez minutos de cálculo al día, programados con FSRS y corregidos con SymPy — sin conexión, en tu ordenador.**
 

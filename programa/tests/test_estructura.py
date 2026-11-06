@@ -12,6 +12,7 @@ from calculo import rutas
 RAIZ = rutas.RAIZ
 PERMITIDOS = {
     "Practicar.bat", "otras-opciones", "usuario", "README.md", "README.es.md", "LICENSE", "programa",
+    "AGENTS.md", "CLAUDE.md",              # instrucciones para IA: norma global
     ".gitignore", ".gitattributes", ".git",
     ".venv", ".cache",                     # los crea el programa; ocultos, no van a git
     "desktop.ini", "Thumbs.db",            # los pone Windows a veces
