@@ -37,8 +37,8 @@ Práctica diaria de derivadas, integrales, derivadas parciales y EDOs: elige lo 
 
 ## Empezar
 
-1. `git clone https://github.com/RicardoeeE/calculus-daily.git` (hace falta Python 3.13).
-2. **Windows:** doble clic en `Practicar.bat` (la primera vez prepara el entorno, 1-2 min). **Cualquier sistema:** `python -m venv .venv`, instala `programa/requirements.txt` y `programa/requirements-ventana.txt`, y ejecuta `python programa/practica.py ventana` (o `hoy` para la terminal).
+1. `git clone https://github.com/RicardoeeE/calculus-daily.git` (probado con Python 3.13; `doctor` admite 3.11 o superior).
+2. **Windows:** doble clic en `Practicar.bat` (la primera vez prepara el entorno, unos 3 min). **Cualquier sistema:** `python -m venv .venv`, instala `programa/requirements.txt` y `programa/requirements-ventana.txt`, y ejecuta `python programa/practica.py ventana` (o `hoy` para la terminal).
 3. Elige tu confianza (1-5), resuelve en papel, escribe solo el resultado y pulsa Enter.
 
 La ventana está probada en Windows; en Linux y macOS funciona la terminal y la ventana no está probada.

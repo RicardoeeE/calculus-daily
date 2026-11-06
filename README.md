@@ -40,9 +40,9 @@ A local practice app for derivatives, integrals, partial derivatives and ODEs: i
 
 ## Quick start
 
-1. **Get it:** `git clone https://github.com/RicardoeeE/calculus-daily.git` (Python 3.13 required).
+1. **Get it:** `git clone https://github.com/RicardoeeE/calculus-daily.git` (tested on Python 3.13; `doctor` accepts 3.11 or newer).
 2. **Run it:**
-   - **Windows:** double-click `Practicar.bat`. The first run creates a `.venv` and installs SymPy, FSRS and the window (1–2 min).
+   - **Windows:** double-click `Practicar.bat`. The first run creates a `.venv` and installs SymPy, FSRS and the window (about 3 min).
    - **Any OS:**
      ```bash
      python -m venv .venv
@@ -118,7 +118,7 @@ calculus-daily/
 ## Tests
 
 ```bash
-.venv/bin/python -B -m unittest discover -s programa/tests -t programa     # 457 tests (454 pass, 3 skipped)
+.venv/bin/python -B -m unittest discover -s programa/tests -t programa     # 457 tests (454 pass, 3 skipped), about 12 min
 .venv/bin/python programa/practica.py ventana --prueba                     # smoke test: opens the window with temp data and closes itself
 ```
 

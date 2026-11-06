@@ -9,7 +9,7 @@ cd /d "%~dp0"
 set "PY=.venv\Scripts\python.exe"
 
 if exist "%PY%" goto comprobar
-echo Primera vez en este equipo: preparo el entorno (sympy, fsrs y la ventana). Tarda 1-2 minutos y solo se hace una vez.
+echo Primera vez en este equipo: preparo el entorno (sympy, fsrs y la ventana). Tarda unos 3 minutos y solo se hace una vez.
 where py >nul 2>&1
 if not errorlevel 1 (
   py -3 -m venv .venv
