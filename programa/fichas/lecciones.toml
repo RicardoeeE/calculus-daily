@@ -1,0 +1,611 @@
+# Lecciones: teoria, forma tipo, ejemplos y un ejemplo guiado con opciones.
+# Para empezar cada tecnica mas pausado y con mas contexto.
+# Se ensenan la primera vez que sale una tecnica que aun no se ha acertado, y siempre
+# con el boton «Ver teoria». Son lectura y practica guiada: no se registran ni dan nota.
+#
+# Formulas entre $...$, en notacion de clase y sin palabras (como fichas/ejemplos.toml).
+# Cada `verificar` es una lista de pares [a, b] que sympy comprueba que son iguales
+# (tests/test_lecciones.py): ninguna cuenta sin comprobar.
+# En cada paso guiado hay una sola opcion correcta y todas explican el porque.
+
+[[leccion]]
+tecnica = "producto"
+titulo = "Regla del producto"
+tema = "Derivadas"
+que_es = "Sirve para derivar dos funciones con x que se multiplican. La derivada de un producto no es el producto de las derivadas: hay que derivar cada factor por turnos."
+reconocer = "Busca dos trozos con x multiplicados, como $x e^x$, $x^2 sen x$ o $(x + 1) ln x$. Si uno de ellos es solo un número no hace falta la regla: $5 x^2$ se deriva directamente."
+forma = "$(u·v)' = u'·v + u·v'$"
+pasos = [
+  "Llama $u$ a un factor y $v$ al otro.",
+  "Deriva cada uno por separado: $u'$ y $v'$.",
+  "Sustituye en la fórmula: el primero derivado por el segundo, más el primero por el segundo derivado.",
+  "Simplifica y, si puedes, saca factor común.",
+]
+ojo = [
+  "Al derivar da igual cuál llames $u$, porque la fórmula sale igual. ALPES (o LIATE) no se usa aquí: es el criterio para elegir $u$ al integrar por partes, donde una mala elección complica la integral.",
+  "Error típico: pensar que $(u·v)' = u'·v'$. Con $x·x = x^2$ daría $1·1 = 1$, pero la derivada de $x^2$ es $2x$.",
+]
+
+[[leccion.ejemplo]]
+enunciado = "$d/dx [x e^x]$"
+pasos = [
+  "Factores: $u = x$ y $v = e^x$.",
+  "Derivadas: $u' = 1$ y $v' = e^x$.",
+  "Fórmula: $1·e^x + x·e^x$.",
+]
+resultado = "$e^x + x e^x = (x + 1) e^x$"
+verificar = [["diff(x*exp(x), x)", "(x + 1)*exp(x)"]]
+
+[[leccion.ejemplo]]
+enunciado = "$d/dx [x^2 sen x]$"
+pasos = [
+  "Factores: $u = x^2$ y $v = sen x$.",
+  "Derivadas: $u' = 2x$ y $v' = cos x$.",
+  "Fórmula: $2x·sen x + x^2·cos x$.",
+]
+resultado = "$2x sen x + x^2 cos x$"
+verificar = [["diff(x**2*sin(x), x)", "2*x*sin(x) + x**2*cos(x)"]]
+
+[[leccion.ejemplo]]
+enunciado = "$d/dx [(x + 1) ln x]$"
+pasos = [
+  "Factores: $u = x + 1$ y $v = ln x$.",
+  "Derivadas: $u' = 1$ y $v' = 1/x$.",
+  "Fórmula: $1·ln x + (x + 1)·1/x$.",
+]
+resultado = "$ln x + (x + 1)/x$"
+verificar = [["diff((x + 1)*log(x), x)", "log(x) + (x + 1)/x"]]
+
+[leccion.guiado]
+enunciado = "$d/dx [x^3 e^x]$"
+cierre = "Hecho: has aplicado la regla paso a paso. El ejercicio que viene se resuelve igual."
+verificar = [["diff(x**3*exp(x), x)", "x**2*exp(x)*(x + 3)"]]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuáles son los dos factores?"
+opciones = [
+  { texto = "$u = x^3 + e^x$", porque = "Eso sería una suma, y aquí se multiplican." },
+  { texto = "$u = x^3$ y $v = e^x$", correcta = true, porque = "Eso es: dos funciones con x multiplicadas." },
+  { texto = "$u = 3x^2$ y $v = e^x$", porque = "$3x^2$ ya es una derivada. Los factores se toman tal como están." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuánto valen $u'$ y $v'$?"
+opciones = [
+  { texto = "$u' = 3x^2$ y $v' = e^x$", correcta = true, porque = "Potencia para $x^3$; y $e^x$ es su propia derivada." },
+  { texto = "$u' = x^2$ y $v' = e^x$", porque = "Falta el exponente delante: la derivada de $x^3$ es $3x^2$." },
+  { texto = "$u' = 3x^2$ y $v' = x e^(x - 1)$", porque = "$e^x$ no es una potencia de x: su derivada es ella misma." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Sustituye en $u'·v + u·v'$. ¿Qué queda?"
+opciones = [
+  { texto = "$3x^2 e^x$", porque = "Falta el segundo sumando, $u·v'$." },
+  { texto = "$3x^2 e^x · x^3 e^x$", porque = "Los dos trozos se suman, no se multiplican." },
+  { texto = "$3x^2 e^x + x^3 e^x$", correcta = true, porque = "Primero derivado por el segundo, más el primero por el segundo derivado." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Saca factor común. ¿Cuál es el resultado?"
+opciones = [
+  { texto = "$x^3 e^x (x + 3)$", porque = "Solo se puede sacar $x^2$, porque el primer sumando tiene $x^2$." },
+  { texto = "$x^2 e^x (3x + 1)$", porque = "Al sacar $x^2 e^x$ quedan $3$ y $x$: el paréntesis es $(x + 3)$." },
+  { texto = "$x^2 e^x (x + 3)$", correcta = true, porque = "Sale $x^2 e^x$ de los dos sumandos, y quedan $3$ y $x$." },
+]
+
+[[leccion]]
+tecnica = "partes"
+titulo = "Integración por partes"
+tema = "Integrales"
+que_es = "Convierte la integral de un producto en otra más fácil. Sale de la regla del producto, leída al revés."
+reconocer = "Dos funciones de distinto tipo multiplicadas, como $x e^x$, $x cos x$ o $x^2 e^x$. También $ln x$ sola, tomando $dv = dx$. Si una es la derivada de la otra, prueba antes sustitución."
+forma = "$∫ u dv = u·v - ∫ v du$"
+pasos = [
+  "Elige $u$ con ALPES: la que primero aparezca en Arcos, Logaritmos, Polinomios, Exponenciales, Senos y cosenos. El resto es $dv$.",
+  "Deriva $u$ para obtener $du$ e integra $dv$ para obtener $v$.",
+  "Sustituye en la fórmula.",
+  "Resuelve la integral que queda y añade $+ C$.",
+]
+ojo = [
+  "ALPES es en español lo que LIATE en inglés: dos reglas para elegir $u$. Solo se usan aquí, al integrar por partes.",
+  "$u$ debe simplificarse al derivar. Con $∫ x e^x dx$, si eliges $u = e^x$ la nueva integral tiene $x^2$ y empeora.",
+  "$v$ se obtiene integrando, no derivando: si $dv = e^(3x) dx$, entonces $v = e^(3x)/3$.",
+]
+
+[[leccion.ejemplo]]
+enunciado = "$∫ x e^x dx$"
+pasos = [
+  "ALPES: el polinomio va antes que la exponencial, así que $u = x$ y $dv = e^x dx$.",
+  "Entonces $du = dx$ y $v = e^x$.",
+  "Fórmula: $x e^x - ∫ e^x dx$.",
+]
+resultado = "$x e^x - e^x + C = (x - 1) e^x + C$"
+verificar = [["diff((x - 1)*exp(x), x)", "x*exp(x)"]]
+
+[[leccion.ejemplo]]
+enunciado = "$∫ x cos x dx$"
+pasos = [
+  "ALPES: el polinomio va antes que el coseno, así que $u = x$ y $dv = cos x dx$.",
+  "Entonces $du = dx$ y $v = sen x$.",
+  "Fórmula: $x sen x - ∫ sen x dx$.",
+]
+resultado = "$x sen x + cos x + C$"
+verificar = [["diff(x*sin(x) + cos(x), x)", "x*cos(x)"]]
+
+[[leccion.ejemplo]]
+enunciado = "$∫ ln x dx$"
+pasos = [
+  "Solo hay un logaritmo: $u = ln x$ y $dv = dx$.",
+  "Entonces $du = 1/x dx$ y $v = x$.",
+  "Fórmula: $x ln x - ∫ x·1/x dx = x ln x - ∫ 1 dx$.",
+]
+resultado = "$x ln x - x + C$"
+verificar = [["diff(x*log(x) - x, x)", "log(x)"]]
+
+[leccion.guiado]
+enunciado = "$∫ x e^(3x) dx$"
+cierre = "Hecho: has elegido $u$ con ALPES y has aplicado la fórmula. El ejercicio que viene se resuelve igual."
+verificar = [["diff(x*exp(3*x)/3 - exp(3*x)/9, x)", "x*exp(3*x)"]]
+
+[[leccion.guiado.paso]]
+pregunta = "Según ALPES, ¿qué función es $u$?"
+opciones = [
+  { texto = "$u = x$", correcta = true, porque = "Los polinomios van antes que las exponenciales, y al derivar $x$ desaparece." },
+  { texto = "$u = e^(3x)$", porque = "La exponencial va después del polinomio. Con esta elección la integral empeora." },
+  { texto = "$u = x e^(3x)$", porque = "Si $u$ se lleva todo, no queda nada que integrar en $dv$." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuánto valen $du$ y $v$?"
+opciones = [
+  { texto = "$du = dx$ y $v = 3 e^(3x)$", porque = "Eso es derivar $e^(3x)$. $v$ se obtiene integrando." },
+  { texto = "$du = dx$ y $v = e^(3x)/3$", correcta = true, porque = "Al integrar $e^(3x)$ se divide entre 3." },
+  { texto = "$du = 0$ y $v = e^(3x)/3$", porque = "La derivada de $x$ es 1, así que $du = dx$." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Sustituye en $u·v - ∫ v du$. ¿Qué queda?"
+opciones = [
+  { texto = "$x e^(3x)/3 + ∫ e^(3x)/3 dx$", porque = "En la fórmula la integral va restando." },
+  { texto = "$x - ∫ e^(3x)/3 dx$", porque = "El primer trozo es $u·v$: $x$ por $e^(3x)/3$." },
+  { texto = "$x e^(3x)/3 - ∫ e^(3x)/3 dx$", correcta = true, porque = "$u·v$ y, restando, la integral de $v du$." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Resuelve la integral que queda. ¿Cuál es el resultado?"
+opciones = [
+  { texto = "$x e^(3x)/3 - e^(3x)/9 + C$", correcta = true, porque = "Al integrar $e^(3x)/3$ se vuelve a dividir entre 3, y queda $e^(3x)/9$." },
+  { texto = "$x e^(3x)/3 - e^(3x)/3 + C$", porque = "Falta dividir otra vez entre 3 al integrar." },
+  { texto = "$x e^(3x)/3 - e^(3x)/9$", porque = "Falta $+ C$: es una integral indefinida." },
+]
+
+[[leccion]]
+tecnica = "caracteristica"
+titulo = "Ecuación característica"
+tema = "EDO de segundo orden"
+que_es = "Convierte una EDO lineal con coeficientes constantes en un polinomio en $r$. Al probar $y = e^(rx)$, cada derivada saca una $r$. Las raíces del polinomio dan la solución general."
+reconocer = "Una EDO con $y''$, $y'$ e $y$, con números delante y un cero a la derecha, como $y'' - 5y' + 6y = 0$."
+forma = "$y'' + a y' + b y = 0$ se convierte en $r^2 + a r + b = 0$"
+pasos = [
+  "Cambia $y''$ por $r^2$, $y'$ por $r$ e $y$ por $1$.",
+  "Resuelve el polinomio factorizando o con la fórmula de segundo grado.",
+  "Con dos raíces reales distintas: $y = C1 e^(r1 x) + C2 e^(r2 x)$.",
+  "Con una raíz doble: $y = (C1 + C2 x) e^(rx)$.",
+  "Con raíces complejas $a ± b i$: $y = e^(ax) (C1 cos(bx) + C2 sen(bx))$.",
+]
+ojo = [
+  "Cuidado con los signos: de $(r - 2)(r - 3) = 0$ salen $r = 2$ y $r = 3$, ambas positivas.",
+  "Sin $y'$ el coeficiente del medio es cero: $y'' + 4y = 0$ da $r^2 + 4 = 0$, con raíces $± 2i$.",
+]
+
+[[leccion.ejemplo]]
+enunciado = "$y'' - 5y' + 6y = 0$"
+pasos = [
+  "Ecuación característica: $r^2 - 5r + 6 = 0$.",
+  "Factoriza: $(r - 2)(r - 3) = 0$, así que $r = 2$ y $r = 3$.",
+  "Dos raíces reales distintas.",
+]
+resultado = "$y = C1 e^(2x) + C2 e^(3x)$"
+verificar = [["r**2 - 5*r + 6", "(r - 2)*(r - 3)"]]
+
+[[leccion.ejemplo]]
+enunciado = "$y'' + 4y' + 4y = 0$"
+pasos = [
+  "Ecuación característica: $r^2 + 4r + 4 = 0$.",
+  "Factoriza: $(r + 2)^2 = 0$, así que $r = -2$ es raíz doble.",
+  "Con raíz doble, la segunda solución lleva una $x$.",
+]
+resultado = "$y = (C1 + C2 x) e^(-2x)$"
+verificar = [["r**2 + 4*r + 4", "(r + 2)**2"]]
+
+[[leccion.ejemplo]]
+enunciado = "$y'' - 2y' + 5y = 0$"
+pasos = [
+  "Ecuación característica: $r^2 - 2r + 5 = 0$.",
+  "Fórmula de segundo grado: $r = (2 ± √(4 - 20))/2 = 1 ± 2i$.",
+  "Raíces complejas con $a = 1$ y $b = 2$.",
+]
+resultado = "$y = e^x (C1 cos(2x) + C2 sen(2x))$"
+verificar = [["(r - (1 + 2*I))*(r - (1 - 2*I))", "r**2 - 2*r + 5"]]
+
+[leccion.guiado]
+enunciado = "$y'' - y' - 6y = 0$"
+cierre = "Hecho: de la EDO al polinomio, y de sus raíces a la solución. El ejercicio que viene se resuelve igual."
+verificar = [["r**2 - r - 6", "(r - 3)*(r + 2)"], ["diff(exp(3*x), x, 2) - diff(exp(3*x), x) - 6*exp(3*x)", "0"], ["diff(exp(-2*x), x, 2) - diff(exp(-2*x), x) - 6*exp(-2*x)", "0"]]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuál es la ecuación característica?"
+opciones = [
+  { texto = "$r^2 + r - 6 = 0$", porque = "Mira el signo: $-y'$ da $-r$." },
+  { texto = "$r^2 - r - 6 = 0$", correcta = true, porque = "$y''$ pasa a $r^2$, $-y'$ a $-r$ y $-6y$ a $-6$." },
+  { texto = "$r^2 - r - 6r = 0$", porque = "La $y$ sin derivar pasa a $1$, no a $r$." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cómo se factoriza?"
+opciones = [
+  { texto = "$(r + 3)(r - 2)$", porque = "Eso da $r^2 + r - 6$: el término del medio tiene el signo cambiado." },
+  { texto = "$(r - 6)(r + 1)$", porque = "Eso da $r^2 - 5r - 6$. Busca dos números que multipliquen $-6$ y sumen $-1$." },
+  { texto = "$(r - 3)(r + 2)$", correcta = true, porque = "$-3$ y $2$ multiplican $-6$ y suman $-1$." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuáles son las raíces?"
+opciones = [
+  { texto = "$r = 3$ y $r = -2$", correcta = true, porque = "Cada factor se anula en su raíz, con el signo contrario al del paréntesis." },
+  { texto = "$r = -3$ y $r = 2$", porque = "$r - 3 = 0$ da $r = 3$: el signo cambia al despejar." },
+  { texto = "$r = 3$ y $r = 2$", porque = "$r + 2 = 0$ da $r = -2$." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuál es la solución general?"
+opciones = [
+  { texto = "$y = (C1 + C2 x) e^(3x)$", porque = "Esa forma es para una raíz doble, y aquí hay dos distintas." },
+  { texto = "$y = C1 e^(3x) + C2 e^(-2x)$", correcta = true, porque = "Dos raíces reales distintas: una exponencial por cada raíz." },
+  { texto = "$y = e^(3x) (C1 cos(2x) + C2 sen(2x))$", porque = "Senos y cosenos solo aparecen con raíces complejas." },
+]
+
+[[leccion]]
+tecnica = "comprobar_solucion"
+titulo = "Comprobar una solución de una EDO"
+tema = "EDO de segundo orden"
+que_es = "Para saber si una función resuelve una EDO no hace falta resolverla: basta con sustituir. Si el lado izquierdo acaba igual que el derecho, es solución."
+reconocer = "Te dan la función y la EDO, y te preguntan si es solución o cuánto vale la EDO aplicada a esa función."
+forma = "$y'' + a y' + b y = f(x)$"
+pasos = [
+  "Deriva la función dos veces para tener $y'$ e $y''$.",
+  "Sustituye $y$, $y'$ e $y''$ en el lado izquierdo de la EDO.",
+  "Saca factor común y simplifica.",
+  "Compara con el lado derecho: si coinciden para todo $x$, es solución.",
+]
+ojo = [
+  "Las derivadas suelen pedir la regla del producto, como en $y = x e^x$.",
+  "Debe cumplirse para todo $x$. Que salga bien en un solo valor no basta.",
+]
+
+[[leccion.ejemplo]]
+enunciado = "¿$y = e^(2x)$ resuelve $y'' - 3y' + 2y = 0$?"
+pasos = [
+  "Derivadas: $y' = 2 e^(2x)$ e $y'' = 4 e^(2x)$.",
+  "Sustituye: $4 e^(2x) - 6 e^(2x) + 2 e^(2x)$.",
+  "Factor común: $(4 - 6 + 2) e^(2x) = 0$.",
+]
+resultado = "Sí es solución: queda $0$."
+verificar = [["diff(exp(2*x), x, 2) - 3*diff(exp(2*x), x) + 2*exp(2*x)", "0"]]
+
+[[leccion.ejemplo]]
+enunciado = "¿$y = x e^x$ resuelve $y'' - 2y' + y = 0$?"
+pasos = [
+  "Derivadas, con la regla del producto: $y' = (x + 1) e^x$ e $y'' = (x + 2) e^x$.",
+  "Sustituye: $(x + 2) e^x - 2(x + 1) e^x + x e^x$.",
+  "Factor común: $(x + 2 - 2x - 2 + x) e^x = 0$.",
+]
+resultado = "Sí es solución: queda $0$."
+verificar = [["diff(x*exp(x), x, 2) - 2*diff(x*exp(x), x) + x*exp(x)", "0"]]
+
+[[leccion.ejemplo]]
+enunciado = "¿$y = x^2$ resuelve $y'' + y = 0$?"
+pasos = [
+  "Derivadas: $y' = 2x$ e $y'' = 2$.",
+  "Sustituye: $2 + x^2$.",
+  "No es cero para todo $x$.",
+]
+resultado = "No es solución: queda $2 + x^2$."
+verificar = [["diff(x**2, x, 2) + x**2", "2 + x**2"]]
+
+[leccion.guiado]
+enunciado = "¿$y = e^(-x)$ resuelve $y'' + 3y' + 2y = 0$?"
+cierre = "Hecho: derivar, sustituir y simplificar. El ejercicio que viene se resuelve igual."
+verificar = [["diff(exp(-x), x, 2) + 3*diff(exp(-x), x) + 2*exp(-x)", "0"]]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuánto vale $y'$?"
+opciones = [
+  { texto = "$y' = e^(-x)$", porque = "Falta el signo: por la regla de la cadena, sale un $-1$." },
+  { texto = "$y' = -e^(-x)$", correcta = true, porque = "La derivada de $-x$ es $-1$ y multiplica." },
+  { texto = "$y' = -x e^(-x - 1)$", porque = "$e^(-x)$ no es una potencia de x: se deriva como exponencial." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuánto vale $y''$?"
+opciones = [
+  { texto = "$y'' = e^(-x)$", correcta = true, porque = "Sale otro $-1$, y menos por menos da más." },
+  { texto = "$y'' = -e^(-x)$", porque = "Derivar $-e^(-x)$ cambia otra vez el signo." },
+  { texto = "$y'' = 0$", porque = "Una exponencial nunca se anula al derivarla." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Sustituye en $y'' + 3y' + 2y$. ¿Qué queda?"
+opciones = [
+  { texto = "$e^(-x) + 3 e^(-x) + 2 e^(-x)$", porque = "$y'$ lleva signo menos: $3y' = -3 e^(-x)$." },
+  { texto = "$e^(-x) - 3 e^(-x) - 2 e^(-x)$", porque = "$y$ es positiva: $2y = 2 e^(-x)$." },
+  { texto = "$e^(-x) - 3 e^(-x) + 2 e^(-x)$", correcta = true, porque = "Cada derivada en su sitio, con su signo." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Simplifica. ¿Es solución?"
+opciones = [
+  { texto = "Sí: $(1 - 3 + 2) e^(-x) = 0$", correcta = true, porque = "El lado izquierdo da cero, igual que el derecho." },
+  { texto = "No: queda $6 e^(-x)$", porque = "Esa suma ignora el signo de $-3 e^(-x)$." },
+  { texto = "No: queda $e^(-x)$", porque = "$1 - 3 + 2 = 0$, así que no queda nada." },
+]
+
+[[leccion]]
+tecnica = "wronskiano"
+titulo = "Wronskiano"
+tema = "EDO de segundo orden"
+que_es = "Es un determinante que dice si dos soluciones son independientes. Si lo son, sirven para construir la solución general."
+reconocer = "Te dan dos funciones $y1$ e $y2$ y te piden su wronskiano, o saber si son independientes."
+forma = "$W = y1·y2' - y1'·y2$"
+pasos = [
+  "Deriva las dos funciones.",
+  "Sustituye en la fórmula: la primera por la derivada de la segunda, menos la derivada de la primera por la segunda.",
+  "Simplifica: las exponenciales que se multiplican suman sus exponentes.",
+  "Si $W$ no es cero, son independientes. Si es cero, una es múltiplo de la otra.",
+]
+ojo = [
+  "El orden importa: si cambias $y1$ por $y2$, el signo de $W$ cambia.",
+  "No se suman los dos productos: entre ellos va un menos.",
+]
+
+[[leccion.ejemplo]]
+enunciado = "$y1 = e^x$, $y2 = e^(3x)$"
+pasos = [
+  "Derivadas: $y1' = e^x$ e $y2' = 3 e^(3x)$.",
+  "Fórmula: $W = e^x·3 e^(3x) - e^x·e^(3x)$.",
+  "Suma exponentes: $W = 3 e^(4x) - e^(4x)$.",
+]
+resultado = "$W = 2 e^(4x)$: nunca se anula, así que son independientes."
+verificar = [["exp(x)*diff(exp(3*x), x) - diff(exp(x), x)*exp(3*x)", "2*exp(4*x)"]]
+
+[[leccion.ejemplo]]
+enunciado = "$y1 = cos(2x)$, $y2 = sen(2x)$"
+pasos = [
+  "Derivadas: $y1' = -2 sen(2x)$ e $y2' = 2 cos(2x)$.",
+  "Fórmula: $W = cos(2x)·2 cos(2x) + 2 sen(2x)·sen(2x)$.",
+  "Saca el 2 y usa $cos^2(2x) + sen^2(2x) = 1$.",
+]
+resultado = "$W = 2$: son independientes."
+verificar = [["cos(2*x)*diff(sin(2*x), x) - diff(cos(2*x), x)*sin(2*x)", "2"]]
+
+[[leccion.ejemplo]]
+enunciado = "$y1 = e^x$, $y2 = 2 e^x$"
+pasos = [
+  "Derivadas: $y1' = e^x$ e $y2' = 2 e^x$.",
+  "Fórmula: $W = e^x·2 e^x - e^x·2 e^x$.",
+  "Los dos trozos son iguales.",
+]
+resultado = "$W = 0$: son dependientes, porque $y2 = 2·y1$."
+verificar = [["exp(x)*diff(2*exp(x), x) - diff(exp(x), x)*2*exp(x)", "0"]]
+
+[leccion.guiado]
+enunciado = "$y1 = e^(2x)$, $y2 = x e^(2x)$"
+cierre = "Hecho: derivar, sustituir y simplificar. El ejercicio que viene se resuelve igual."
+verificar = [["exp(2*x)*diff(x*exp(2*x), x) - diff(exp(2*x), x)*x*exp(2*x)", "exp(4*x)"]]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuánto vale $y1'$?"
+opciones = [
+  { texto = "$y1' = e^(2x)$", porque = "Falta el 2 que sale al derivar $2x$." },
+  { texto = "$y1' = 2 e^(2x)$", correcta = true, porque = "Regla de la cadena: la derivada de $2x$ multiplica." },
+  { texto = "$y1' = 2x e^(2x)$", porque = "Sale la derivada de $2x$, que es 2, no $2x$." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuánto vale $y2'$? Es un producto."
+opciones = [
+  { texto = "$y2' = e^(2x) + 2x e^(2x)$", correcta = true, porque = "Regla del producto: $1·e^(2x) + x·2 e^(2x)$." },
+  { texto = "$y2' = 2 e^(2x)$", porque = "Eso multiplica las derivadas de los factores. Hay que usar la regla del producto." },
+  { texto = "$y2' = 2x e^(2x)$", porque = "Falta el sumando $1·e^(2x)$." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Sustituye en $y1·y2' - y1'·y2$. ¿Qué queda?"
+opciones = [
+  { texto = "$e^(2x)(e^(2x) + 2x e^(2x)) + 2 e^(2x)·x e^(2x)$", porque = "Entre los dos productos va un menos." },
+  { texto = "$2 e^(2x)(e^(2x) + 2x e^(2x)) - e^(2x)·x e^(2x)$", porque = "Las derivadas están cambiadas de sitio." },
+  { texto = "$e^(2x)(e^(2x) + 2x e^(2x)) - 2 e^(2x)·x e^(2x)$", correcta = true, porque = "La primera por la derivada de la segunda, menos la derivada de la primera por la segunda." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Simplifica. ¿Cuánto vale $W$?"
+opciones = [
+  { texto = "$W = e^(4x)$", correcta = true, porque = "Los trozos con $2x e^(4x)$ se cancelan. Nunca es cero, así que son independientes." },
+  { texto = "$W = 0$", porque = "Los trozos con $x$ se cancelan, pero queda $e^(4x)$." },
+  { texto = "$W = 4x e^(4x)$", porque = "Los dos trozos con $x$ se restan, no se suman." },
+]
+
+[[leccion]]
+tecnica = "forma_yp"
+titulo = "Solución particular"
+tema = "EDO de segundo orden"
+que_es = "Si la EDO tiene algo distinto de cero a la derecha, hay que buscar una solución particular $y_p$. Se propone una función con la misma forma que el lado derecho y se calculan sus coeficientes."
+reconocer = "Una EDO con números delante y una función a la derecha, como $y'' - 3y' + 2y = e^(3x)$. La solución general es la de la homogénea más $y_p$."
+forma = "$y = y_h + y_p$"
+pasos = [
+  "Resuelve la homogénea para conocer sus raíces.",
+  "Propón $y_p$ según el lado derecho. Un polinomio pide un polinomio del mismo grado; $e^(kx)$ pide $A e^(kx)$; un seno o coseno pide $A cos(kx) + B sen(kx)$.",
+  "Si esa forma ya resuelve la homogénea, multiplícala por $x$. Si la raíz es doble, por $x^2$.",
+  "Deriva, sustituye en la EDO e iguala coeficientes.",
+]
+ojo = [
+  "Con un seno o un coseno a la derecha hay que poner los dos términos, aunque solo aparezca uno.",
+  "Con un polinomio se pone completo: para $x^2$ a la derecha, $A x^2 + B x + D$.",
+  "Mira siempre antes las raíces: si $k$ es raíz, $A e^(kx)$ da cero al sustituir y no sirve.",
+]
+
+[[leccion.ejemplo]]
+enunciado = "$y'' - 3y' + 2y = e^(3x)$"
+pasos = [
+  "Raíces de la homogénea: $r = 1$ y $r = 2$. El 3 no es raíz.",
+  "Propuesta: $y_p = A e^(3x)$.",
+  "Sustituye: $9A e^(3x) - 9A e^(3x) + 2A e^(3x) = e^(3x)$, así que $2A = 1$.",
+]
+resultado = "$y_p = e^(3x)/2$"
+verificar = [["diff(exp(3*x)/2, x, 2) - 3*diff(exp(3*x)/2, x) + 2*exp(3*x)/2", "exp(3*x)"]]
+
+[[leccion.ejemplo]]
+enunciado = "$y'' + y = x$"
+pasos = [
+  "Raíces de la homogénea: $r = ± i$. No interfieren con un polinomio.",
+  "Propuesta de grado 1: $y_p = A x + B$, con $y_p'' = 0$.",
+  "Sustituye: $A x + B = x$, así que $A = 1$ y $B = 0$.",
+]
+resultado = "$y_p = x$"
+verificar = [["diff(x, x, 2) + x", "x"]]
+
+[[leccion.ejemplo]]
+enunciado = "$y'' - y = e^x$"
+pasos = [
+  "Raíces de la homogénea: $r = 1$ y $r = -1$. El 1 es raíz, así que $A e^x$ no sirve.",
+  "Se multiplica por $x$: $y_p = A x e^x$, con $y_p'' = A (x + 2) e^x$.",
+  "Sustituye: $A (x + 2) e^x - A x e^x = 2A e^x = e^x$, así que $A = 1/2$.",
+]
+resultado = "$y_p = x e^x/2$"
+verificar = [["diff(x*exp(x)/2, x, 2) - x*exp(x)/2", "exp(x)"]]
+
+[leccion.guiado]
+enunciado = "$y'' - 4y = 3 e^x$"
+cierre = "Hecho: raíces, forma, sustitución y coeficiente. El ejercicio que viene se resuelve igual."
+verificar = [["r**2 - 4", "(r - 2)*(r + 2)"], ["diff(-exp(x), x, 2) - 4*(-exp(x))", "3*exp(x)"]]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuáles son las raíces de la homogénea?"
+opciones = [
+  { texto = "$r = 2$ y $r = -2$", correcta = true, porque = "$r^2 - 4 = 0$ da $r = ± 2$." },
+  { texto = "$r = 4$ y $r = -4$", porque = "$r^2 = 4$ da $± 2$: falta la raíz cuadrada." },
+  { texto = "$r = 2i$ y $r = -2i$", porque = "Esas serían las raíces de $r^2 + 4 = 0$." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "A la derecha está $3 e^x$. ¿Qué $y_p$ propones?"
+opciones = [
+  { texto = "$y_p = A x e^x$", porque = "La $x$ solo hace falta si 1 es raíz, y las raíces son $± 2$." },
+  { texto = "$y_p = A e^x$", correcta = true, porque = "Misma forma que el lado derecho, y 1 no es raíz." },
+  { texto = "$y_p = A cos x + B sen x$", porque = "Esa forma es para senos y cosenos." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Sustituye en $y'' - 4y$. ¿Qué queda?"
+opciones = [
+  { texto = "$A e^x - 4A e^x = 3 e^x$", correcta = true, porque = "$y_p''$ también es $A e^x$." },
+  { texto = "$A e^x + 4A e^x = 3 e^x$", porque = "En la EDO la $y$ lleva $-4$." },
+  { texto = "$-4A e^x = 3 e^x$", porque = "Falta $y_p''$, que vale $A e^x$." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "De $-3A = 3$, ¿cuál es $y_p$?"
+opciones = [
+  { texto = "$y_p = e^x$", porque = "Falta el signo: $A = -1$." },
+  { texto = "$y_p = 3 e^x$", porque = "Hay que despejar $A$ de $-3A = 3$." },
+  { texto = "$y_p = -e^x$", correcta = true, porque = "$A = -1$. Al sustituir sale $-e^x + 4 e^x = 3 e^x$." },
+]
+
+[[leccion]]
+tecnica = "pvi"
+titulo = "Problema de valor inicial"
+tema = "EDO de segundo orden"
+que_es = "La solución general tiene dos constantes, $C1$ y $C2$. Las condiciones iniciales fijan su valor y dejan una única solución."
+reconocer = "Una EDO que además trae datos como $y(0) = 1$ e $y'(0) = 0$."
+forma = "$y(0) = y_0$, $y'(0) = v_0$"
+pasos = [
+  "Halla la solución general con la ecuación característica.",
+  "Sustituye $x = 0$ en $y$ para obtener la primera ecuación.",
+  "Deriva $y$ y sustituye $x = 0$ para obtener la segunda.",
+  "Resuelve el sistema y escribe $y$ con los valores de $C1$ y $C2$.",
+]
+ojo = [
+  "Primero la solución general y después las condiciones. Si la EDO no es homogénea, $y_p$ ya tiene que estar sumada antes de sustituir.",
+  "Deriva antes de sustituir $x = 0$: si sustituyes primero, te queda un número y su derivada no sirve.",
+  "$e^0 = 1$, $cos 0 = 1$ y $sen 0 = 0$.",
+]
+
+[[leccion.ejemplo]]
+enunciado = "$y'' - 4y' + 3y = 0$, $y(0) = 1$, $y'(0) = 0$"
+pasos = [
+  "Raíces: $r = 1$ y $r = 3$, así que $y = C1 e^x + C2 e^(3x)$.",
+  "Con $y(0) = 1$: $C1 + C2 = 1$.",
+  "Deriva, $y' = C1 e^x + 3 C2 e^(3x)$; con $y'(0) = 0$: $C1 + 3 C2 = 0$.",
+  "Resuelve: $C2 = -1/2$ y $C1 = 3/2$.",
+]
+resultado = "$y = (3/2) e^x - (1/2) e^(3x)$"
+verificar = [
+  ["diff(3*exp(x)/2 - exp(3*x)/2, x, 2) - 4*diff(3*exp(x)/2 - exp(3*x)/2, x) + 3*(3*exp(x)/2 - exp(3*x)/2)", "0"],
+  ["(3*exp(x)/2 - exp(3*x)/2).subs(x, 0)", "1"],
+  ["diff(3*exp(x)/2 - exp(3*x)/2, x).subs(x, 0)", "0"],
+]
+
+[[leccion.ejemplo]]
+enunciado = "$y'' + y = 0$, $y(0) = 2$, $y'(0) = 3$"
+pasos = [
+  "Raíces: $r = ± i$, así que $y = C1 cos x + C2 sen x$.",
+  "Con $y(0) = 2$: $C1 = 2$.",
+  "Deriva, $y' = -C1 sen x + C2 cos x$; con $y'(0) = 3$: $C2 = 3$.",
+]
+resultado = "$y = 2 cos x + 3 sen x$"
+verificar = [
+  ["diff(2*cos(x) + 3*sin(x), x, 2) + 2*cos(x) + 3*sin(x)", "0"],
+  ["(2*cos(x) + 3*sin(x)).subs(x, 0)", "2"],
+  ["diff(2*cos(x) + 3*sin(x), x).subs(x, 0)", "3"],
+]
+
+[leccion.guiado]
+enunciado = "$y'' - y = 0$, $y(0) = 3$, $y'(0) = 1$"
+cierre = "Hecho: solución general, dos condiciones y un sistema. El ejercicio que viene se resuelve igual."
+verificar = [
+  ["diff(2*exp(x) + exp(-x), x, 2) - (2*exp(x) + exp(-x))", "0"],
+  ["(2*exp(x) + exp(-x)).subs(x, 0)", "3"],
+  ["diff(2*exp(x) + exp(-x), x).subs(x, 0)", "1"],
+]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Cuál es la solución general?"
+opciones = [
+  { texto = "$y = C1 cos x + C2 sen x$", porque = "Eso sale de $r^2 + 1 = 0$, y aquí es $r^2 - 1 = 0$." },
+  { texto = "$y = C1 e^x + C2 e^(-x)$", correcta = true, porque = "$r^2 - 1 = 0$ da $r = 1$ y $r = -1$." },
+  { texto = "$y = (C1 + C2 x) e^x$", porque = "Esa forma es para una raíz doble, y aquí hay dos distintas." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "¿Qué ecuación da $y(0) = 3$?"
+opciones = [
+  { texto = "$C1 + C2 = 3$", correcta = true, porque = "Con $x = 0$ las dos exponenciales valen 1." },
+  { texto = "$C1 - C2 = 3$", porque = "Ese signo sale al derivar, y aquí aún no se deriva." },
+  { texto = "$C1·C2 = 3$", porque = "Los dos términos se suman." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Con $y' = C1 e^x - C2 e^(-x)$, ¿qué ecuación da $y'(0) = 1$?"
+opciones = [
+  { texto = "$C1 + C2 = 1$", porque = "$e^(-x)$ deriva con signo menos." },
+  { texto = "$C1 - C2 = 3$", porque = "Esta condición vale 1, no 3." },
+  { texto = "$C1 - C2 = 1$", correcta = true, porque = "Con $x = 0$ las exponenciales valen 1 y se mantiene el menos." },
+]
+
+[[leccion.guiado.paso]]
+pregunta = "Resuelve el sistema. ¿Cuál es la solución?"
+opciones = [
+  { texto = "$y = e^x + 2 e^(-x)$", porque = "Da $y'(0) = -1$. Las constantes están cambiadas." },
+  { texto = "$y = 2 e^x + e^(-x)$", correcta = true, porque = "Sumando las ecuaciones, $2 C1 = 4$: $C1 = 2$ y $C2 = 1$." },
+  { texto = "$y = 3 e^x + e^(-x)$", porque = "Da $y(0) = 4$, y debe dar 3." },
+]

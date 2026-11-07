@@ -304,15 +304,19 @@ class TestCola(unittest.TestCase):
         self.assertNotIn("PP-PROD-X", {x.ficha.id for x in hoy})
         self.assertEqual(FICHAS["PP-PROD-X"].requiere, ["comprobar_solucion"])
 
+    # Con el foco, la derivada tiene plaza el dia siguiente a uno practicado sin derivada.
+    def _con_dia_sin_derivada(self):
+        return [entrada(FICHAS["D01"], date(2026, 10, 15), 3), entrada(FICHAS["I01"], date(2026, 10, 20), 1)]
+
     def test_empieza_por_lo_seguro(self):
-        log = [entrada(FICHAS["D01"], date(2026, 10, 15), 3)]
-        hoy = cola(FICHAS, log, date(2026, 10, 27))
+        hoy = cola(FICHAS, self._con_dia_sin_derivada(), date(2026, 10, 27))
         self.assertEqual(hoy[0].ficha.id, "D01")
 
     def test_repaso_con_foco(self):
-        """Un repaso vencido de un grupo sin plaza (derivadas en foco) sale igual."""
+        """Un repaso vencido de derivada sale el dia de derivada; el otro dia espera su turno."""
+        self.assertIn("D01", {x.ficha.id for x in cola(FICHAS, self._con_dia_sin_derivada(), date(2026, 10, 27))})
         log = [entrada(FICHAS["D01"], date(2026, 10, 15), 3)]
-        self.assertIn("D01", {x.ficha.id for x in cola(FICHAS, log, date(2026, 10, 27))})
+        self.assertNotIn("D01", {x.ficha.id for x in cola(FICHAS, log, date(2026, 10, 27))})
 
     def test_informe_con_parciales(self):
         with mock.patch.object(registro, "RUTA", Path(tempfile.mkdtemp()) / "r.jsonl"):

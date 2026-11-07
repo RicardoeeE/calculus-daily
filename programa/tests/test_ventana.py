@@ -5,12 +5,14 @@ con la variable de entorno VENTANA_HUMO=1 y si hay pywebview y WebView2."""
 import io
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
 import time
 import unittest
 from contextlib import redirect_stdout
+from datetime import timedelta
 from pathlib import Path
 from unittest import mock
 
@@ -346,6 +348,67 @@ class TestHumoReal(unittest.TestCase):
         r = subprocess.run([sys.executable, "-B", "practica.py", "ventana", "--prueba"], cwd=rutas.PROGRAMA,
                            capture_output=True, text=True, encoding="utf-8", timeout=180)
         self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+
+
+class TestModoExamen(unittest.TestCase):
+    """La sesion extra del proximo examen en la ventana, sin terminal."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.cache = self.tmp / ".cache"
+        parches = [mock.patch.object(registro, "RUTA", self.tmp / "r.jsonl"),
+                   mock.patch.object(sesion, "DIARIO", self.tmp / "d.md"),
+                   mock.patch.object(servicio, "elegir_examen", lambda dia, nombre=None: {
+                       "nombre": "P2 (EDOs)", "fecha": dia + timedelta(days=3), "dias_antes": 14,
+                       "tecnicas": ["caracteristica", "wronskiano", "pvi"]})]
+        for p in parches:
+            p.start()
+            self.addCleanup(p.stop)
+        lector = mock.Mock()
+        self.api = ventana.API(servicio.Sesion(FICHAS, cache=self.cache, seguro=True), cache=self.cache,
+                               git=False, lector=lector)
+
+    def responder(self, e):
+        v = FICHAS[e["ficha"]].variante(e["semilla"])
+        return self.api.registrar(e["ficha"], e["semilla"], 3, v.respuesta_modelo)
+
+    def test_inicio_dice_el_examen(self):
+        self.assertEqual(self.api.inicio()["examen"], {"nombre": "P2 (EDOs)", "corto": "P2", "faltan": 3})
+
+    def test_fuera_de_plazo_no_se_ofrece(self):
+        with mock.patch.object(servicio, "elegir_examen", lambda dia, nombre=None: {
+                "nombre": "P3", "fecha": dia + timedelta(days=40), "dias_antes": 21, "tecnicas": []}):
+            self.assertIsNone(self.api.inicio()["examen"])
+        with mock.patch.object(servicio, "elegir_examen", lambda dia, nombre=None: None):
+            self.assertIsNone(self.api.inicio()["examen"])
+            self.assertEqual(self.api.examen()["ejercicios"], [])
+
+    def test_solo_tecnicas_del_examen(self):
+        r = self.api.examen()
+        self.assertTrue(r["ok"])
+        self.assertEqual(len(r["ejercicios"]), 5)
+        self.assertLessEqual({e["tecnica"] for e in r["ejercicios"]}, {"caracteristica", "wronskiano", "pvi"})
+        e = r["ejercicios"][0]
+        self.assertEqual((e["numero"], e["total"], e["motivo"]), (1, 5, "examen"))
+        self.assertIn("enunciado_trozos", e)   # lista para pintar, como la cola de hoy
+
+    def test_se_registra_como_examen_y_no_gasta_el_cupo(self):
+        hoy = self.api.cola()["ejercicios"]
+        e = self.api.examen()["ejercicios"][0]
+        self.assertTrue(self.responder(e)["ok"])
+        self.assertEqual(registro.leer()[-1]["motivo"], "examen")
+        despues = self.api.cola()["ejercicios"]   # vuelve a la sesion de hoy
+        self.assertEqual(len(despues), len(hoy))
+        self.assertTrue(self.responder(despues[0])["ok"])
+        self.assertNotEqual(registro.leer()[-1]["motivo"], "examen")
+
+    def test_otra_ronda_no_repite(self):
+        primera = self.api.examen()["ejercicios"]
+        for e in primera:
+            self.responder(e)
+        segunda = self.api.examen()["ejercicios"]
+        self.assertFalse({e["ficha"] for e in primera} & {e["ficha"] for e in segunda})
 
 
 if __name__ == "__main__":

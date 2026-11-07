@@ -22,6 +22,7 @@ from datetime import date
 from pathlib import Path
 
 from . import datos, registro, servicio, tutela
+from .fichas import NOMBRES_TECNICA, cargar_lecciones
 from .doctor import version_webview2
 from . import sesion as _sesion
 from .huecos import HUECO, recortar
@@ -164,6 +165,7 @@ class API:
         self._s = sesion or servicio.Sesion(cache=self._cache, seguro=True)
         self._git = git
         self._minimo = minimo
+        self._modo_examen = False   # lo que se registre lleva el motivo «examen»
         self._lector = lector if lector is not None else Lector(self._cache)
         self._ventana = None
         self._subida = None
@@ -184,15 +186,46 @@ class API:
             lineas = [x[2:] for x in reco.splitlines() if x.startswith("- ")][:3]
         causas = [{"clave": k, "texto": v} for k, v in tutela.CAUSAS.items() if k != "5"]
         return {"ok": True, "dia": dia.isoformat(), "revision": lineas, "causas": causas,
-                "limite": servicio.LIMITE_LECTURA, "prueba": not self._git, "minimo": self._minimo}
+                "limite": servicio.LIMITE_LECTURA, "prueba": not self._git, "minimo": self._minimo,
+                "examen": self._s.examen_cercano().get("examen")}
 
     @_envuelto
     def cola(self):
+        self._modo_examen = False
+        return self._para_la_ventana(self._s.cola(self._minimo))
+
+    @_envuelto
+    def examen(self):
+        """Modo examen: la sesion extra del proximo examen, sin terminal."""
+        self._modo_examen = True
+        return self._para_la_ventana(self._s.cola_de_examen())
+
+    @_envuelto
+    def leccion(self, tecnica):
+        """La leccion de esa tecnica con cada texto en trozos; sin nota ni registro."""
+        d = cargar_lecciones().get(tecnica)
+        if d is None:
+            return {"ok": False, "error": f"No hay lección de {tecnica}"}
+        return {"ok": True, "leccion": self._leccion_trozos(d)}
+
+    def _leccion_trozos(self, d):
+        if isinstance(d, str):
+            return self._trozos(None, d)
+        if isinstance(d, list):
+            return [self._leccion_trozos(x) for x in d]
+        return {k: (v if k in ("tecnica", "titulo", "tema", "correcta") else self._leccion_trozos(v))
+                for k, v in d.items() if k != "verificar"}
+
+    def _para_la_ventana(self, r):
         from .ver import argumentos
-        r = self._s.cola(self._minimo)
         if not r.get("ok"):
             return r
+        lecciones = cargar_lecciones()
         for e in r["ejercicios"]:
+            e["tecnica_nombre"] = NOMBRES_TECNICA.get(e["tecnica"], e["tecnica"])
+            e["leccion_disponible"] = e["tecnica"] in lecciones
+            # La leccion sustituye al ejemplo completo la primera vez; los ejemplos con huecos siguen.
+            e["leccion"] = e["leccion_disponible"] and bool(e.get("ejemplo")) and not e["ejemplo"].get("huecos")
             v = self._s.fichas[e["ficha"]].variante(e["semilla"])
             try:
                 e["grafica"] = argumentos(v) is not None
@@ -273,6 +306,7 @@ class API:
             visibles, ocultos = recortar(todos, len(ocultos_planos))
         else:
             visibles, ocultos = ej.get("pasos") or [], ocultos_planos
+        ej["nombre"] = NOMBRES_TECNICA.get(ej.get("tecnica"), ej.get("tecnica"))
         ej["idea_trozos"] = self._trozos(None, marcado.get("idea", ej.get("idea", "")))
         ej["pasos_trozos"] = [[{"texto": HUECO}] if p == HUECO else self._trozos(None, p) for p in visibles]
         ej["ocultos_trozos"] = [self._trozos(None, p) for p in ocultos]
@@ -330,7 +364,7 @@ class API:
         with self._cerrojo:
             self._dias.add(self._s.hoy())
             r = self._s.registrar(ficha, semilla, confianza, respuesta or None, bool(rendido), causa or None,
-                                  bool(reclamo))
+                                  bool(reclamo), motivo="examen" if self._modo_examen else None)
         if r.get("ok") and r.get("proximo"):
             r["proximo_texto"] = date.fromisoformat(r["proximo"]).strftime("%d/%m")
         r.pop("entrada", None)
@@ -529,9 +563,12 @@ def _resto_prueba(js, esperar, resultado, api=None):
     vistos = {}
     while True:
         js("document.getElementById('siguiente').click()")
-        esperar(f"['ejemplo', 'confianza', 'final'].includes({fase})")
+        esperar(f"['leccion', 'ejemplo', 'confianza', 'final'].includes({fase})")
         if js(fase) == "final":
             break
+        if js(fase) == "leccion":
+            js("document.getElementById('leccion-saltar').click()")
+            esperar(f"{fase} === 'confianza'")
         if js(fase) == "ejemplo":
             js("document.getElementById('ejemplo-seguir').click()")
             if js(fase) == "ejemplo":
@@ -619,12 +656,25 @@ def _recorrido_prueba(ventana, api, resultado, captura=None, completa=True):
     try:
         esperar("document.body.dataset.fase === 'ejemplo' || document.body.dataset.fase === 'confianza'")
         tiempos["interfaz_lista"] = round(time.monotonic() - t0, 2)
+        # Modo examen, si hay uno en plazo: entrar y volver a la sesion de hoy.
+        if not js("document.getElementById('modo-examen').hidden"):
+            js("document.getElementById('modo-examen').click()")
+            esperar("document.getElementById('titulo').textContent.startsWith('Preparar')")
+            esperar("['leccion', 'ejemplo', 'confianza'].includes(document.body.dataset.fase)")
+            resultado["modo_examen"] = js("document.getElementById('progreso-texto').textContent")
+            js("document.getElementById('modo-examen').click()")
+            esperar("document.getElementById('titulo').textContent === 'Sesión de hoy'")
+            esperar("['leccion', 'ejemplo', 'confianza'].includes(document.body.dataset.fase)")
         # «Hoy solo 2»: la cola minima del motor (y el humo va mas rapido).
         resultado["solo_dos"] = not js("document.getElementById('solo-dos').hidden")
         if resultado["solo_dos"]:
             js("document.getElementById('solo-dos').click()")
             esperar("document.getElementById('progreso-texto').textContent.endsWith(' de 2')")
-            esperar("document.body.dataset.fase === 'ejemplo' || document.body.dataset.fase === 'confianza'")
+            esperar("['leccion', 'ejemplo', 'confianza'].includes(document.body.dataset.fase)")
+        if js("document.body.dataset.fase") == "leccion":
+            # La leccion entera: teoria, ejemplos y cada paso guiado con su opcion correcta.
+            resultado["leccion"] = json.loads(js("JSON.stringify(window.leccionCompletaPrueba())"))
+            esperar("document.body.dataset.fase === 'confianza'")
         if js("document.body.dataset.fase") == "ejemplo":
             js("document.getElementById('ejemplo-seguir').click()")
             esperar("document.body.dataset.fase === 'confianza'")
@@ -705,8 +755,8 @@ def abrir(minimo=False, prueba=False, captura=None, salida=print):
     try:
         titulo = TITULO + (f" (prueba {os.getpid()})" if prueba else "")
         # Sin text_select, pywebview mete un <style> en linea que la CSP bloquea.
-        ventana = webview.create_window(titulo, url=str(INTERFAZ / "index.html"), js_api=api, width=980,
-                                        height=820, min_size=(560, 560), text_select=True,
+        ventana = webview.create_window(titulo, url=str(INTERFAZ / "index.html"), js_api=api, width=1120,
+                                        height=860, min_size=(400, 520), text_select=True,
                                         background_color="#1B1D21" if tema_oscuro() else "#F7F6F2")
         api._ventana = ventana
         ventana.events.shown += lambda: mostrada.set()

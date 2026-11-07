@@ -338,6 +338,34 @@ class Sesion:
         return {"ok": True, "dia": dia.isoformat(), "ejercicios": salida}
 
     @seguro
+    def examen_cercano(self):
+        """El proximo examen si ya esta en su plazo de preparacion (`dias_antes` del
+        calendario), o None."""
+        dia = self.hoy()
+        ex = elegir_examen(dia)
+        if ex is None or (ex["fecha"] - dia).days > ex.get("dias_antes", 14):
+            return {"ok": True, "examen": None}
+        return {"ok": True, "examen": {"nombre": ex["nombre"], "corto": re.sub(r"\s*\(.*\)$", "", ex["nombre"]),
+                                       "faltan": (ex["fecha"] - dia).days}}
+
+    @seguro
+    def cola_de_examen(self, n=5):
+        """Modo examen, como `practica.py examen`: ejercicios extra de las tecnicas
+        del proximo examen; no gastan el cupo del dia. Con `numero`, `total` y `ejemplo`."""
+        dia = self.hoy()
+        ex = elegir_examen(dia)
+        lista = cola_examen(self.fichas, registro.leer(), dia, ex, n) if ex is not None else []
+        salida, pares = [], []
+        for i, x in enumerate(lista, 1):
+            item = {"ficha": x.ficha.id, "semilla": x.semilla, "motivo": "examen"}
+            v = self._variante(item["ficha"], item["semilla"])
+            d = {**item, **self._datos(v, dia), "etiqueta": "examen", "numero": i, "total": len(lista)}
+            salida.append(d)
+            pares.append((item, d))
+        con_ejemplo(self.fichas, pares, self._ejemplo)
+        return {"ok": True, "dia": dia.isoformat(), "ejercicios": salida}
+
+    @seguro
     def ejercicio(self, ficha, semilla):
         """Los datos de un ejercicio, sin poner en marcha el reloj."""
         v = self._variante(ficha, semilla)

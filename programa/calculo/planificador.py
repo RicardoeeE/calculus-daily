@@ -52,6 +52,14 @@ CUPO_MINIMO = {"algebra": 0, "parcial": 0, "derivada": 1, "integral": 1}
 FOCO = "parcial"
 CUPO_FOCO = {"algebra": 1, "parcial": 2, "derivada": 0, "integral": 2}
 CUPO_MINIMO_FOCO = {"algebra": 0, "parcial": 1, "derivada": 0, "integral": 1}
+# En una simulacion de 100 dias, con el foco, las derivadas no salian
+# nunca (1 de 19 fichas vista). Ahora, si el ultimo dia practicado no hubo derivada,
+# el calentamiento de algebra cede su plaza a una derivada: una cada dos dias.
+CUPO_FOCO_DERIVADA = {"algebra": 0, "parcial": 2, "derivada": 1, "integral": 2}
+# El foco se apaga cuando cada tecnica de estos escalones del grupo se ha dominado
+# alguna vez (parciales y exactas). Los escalones 5-6 (EDOs de orden superior) siguen
+# dentro del grupo de foco, pero no hace falta dominarlo para salir.
+ESCALON_FOCO = 4
 
 VENTANA = 8          # ultimos intentos por tecnica para medir dominio
 UMBRAL_P = 0.7       # acierto autonomo que se considera dominio
@@ -341,8 +349,9 @@ def progreso(fichas, entradas, hitos=None):
     dominadas = set()
     por_nivel = set()
     escalon = {g: max(_escalon_actual(tecnicas[g], set()), (hitos or {}).get(g, 1)) for g in GRUPOS}
-    foco_tecnicas = set(tecnicas.get(FOCO, {}))
+    foco_tecnicas = {t for t, e in tecnicas.get(FOCO, {}).items() if e <= ESCALON_FOCO}
     foco_apagado = not foco_tecnicas
+    alguna_vez = set()   # tecnicas dominadas en algun momento (el foco mira esto, no el ahora)
     for e in _ordenadas(entradas):
         t = e.get("tecnica")
         if t is None:
@@ -351,6 +360,7 @@ def progreso(fichas, entradas, hitos=None):
         v.append(e)
         if _dominio_de(list(v), t, n_fichas.get(t, FICHAS_OK)).dominada:
             dominadas.add(t)
+            alguna_vez.add(t)
         else:
             dominadas.discard(t)
         if acierto_de_nivel(e):
@@ -358,7 +368,7 @@ def progreso(fichas, entradas, hitos=None):
         g = grupo_de(e)
         if g in tecnicas:
             escalon[g] = max(escalon[g], _escalon_actual(tecnicas[g], dominadas | por_nivel))
-        if foco_tecnicas and foco_tecnicas <= dominadas:
+        if foco_tecnicas and foco_tecnicas <= alguna_vez:
             foco_apagado = True
     return Progreso(escalon, foco_apagado, set(dominadas), set(por_nivel))
 
@@ -374,10 +384,26 @@ def foco_activo(fichas, entradas, prog=None):
     return not prog.foco_apagado
 
 
-def cupos(fichas, entradas, minimo=False, prog=None):
+def cupos(fichas, entradas, minimo=False, prog=None, dia=None):
+    """Plazas de hoy por grupo. Con `dia`, durante el foco y si el ultimo dia
+    practicado antes de hoy no tuvo derivada, hoy toca una (CUPO_FOCO_DERIVADA)."""
     if foco_activo(fichas, entradas, prog):
-        return dict(CUPO_MINIMO_FOCO if minimo else CUPO_FOCO)
+        if minimo:
+            return dict(CUPO_MINIMO_FOCO)
+        if dia is not None and not _derivada_el_ultimo_dia(entradas, dia):
+            return dict(CUPO_FOCO_DERIVADA)
+        return dict(CUPO_FOCO)
     return dict(CUPO_MINIMO if minimo else CUPO)
+
+
+def _derivada_el_ultimo_dia(entradas, dia):
+    """True si el ultimo dia practicado antes de `dia` (sin sesiones extra) tuvo
+    alguna derivada. Sin dias anteriores, True: el primer dia empieza con algebra."""
+    diario = [e for e in entradas if fecha(e) < dia and e.get("motivo") not in MOTIVOS_EXTRA]
+    if not diario:
+        return True
+    ultimo = max(fecha(e) for e in diario)
+    return any(grupo_de(e) == "derivada" for e in diario if fecha(e) == ultimo)
 
 
 def abiertas_por_examen(dia, ruta=None):
@@ -607,16 +633,26 @@ def cola(fichas, entradas, dia, minimo=False, calendario=None, hitos=None):
     for e in entradas:
         if e["nota"] >= 3:
             aciertos[e.get("tecnica")] = aciertos.get(e.get("tecnica"), 0) + 1
-    cupo = cupos(fichas, entradas, minimo, prog)
-    # Un repaso vencido nunca se queda sin sitio: si su grupo no tiene plaza hoy
-    # (p. ej. derivadas durante el foco), se le cede una del grupo con mas.
+    cupo = cupos(fichas, entradas, minimo, prog, dia)
+    if cupo == CUPO_FOCO_DERIVADA and _previa_de_atascadas(fichas, apartadas, hechas_hoy) is not None:
+        cupo = dict(CUPO_FOCO)   # una ficha atascada pide su algebra previa: gana al turno de derivada
+    turnos = cupo in (CUPO_FOCO, CUPO_FOCO_DERIVADA)
+    # Un repaso vencido nunca se queda sin sitio: si su grupo no tiene plaza hoy, se
+    # le cede una del grupo con mas. Con el foco, algebra y derivada se turnan
+    # un dia cada una: la que no tiene plaza hoy la tiene el proximo dia practicado.
     for g in GRUPOS:
+        if turnos and g in ("algebra", "derivada"):
+            continue
         if cupo[g] == 0 and any(f.grupo == g and fid in tarjetas and fid not in hechas_hoy
                                 and fecha_proxima(tarjetas[fid]) <= dia for fid, f in fichas.items()):
             donante = max((x for x in GRUPOS if x != "algebra"), key=lambda x: cupo[x])
             if cupo[donante] > 1:
                 cupo[donante] -= 1
                 cupo[g] = 1
+    vistas = {}
+    for fid in tarjetas:
+        if fid in fichas:
+            vistas[fichas[fid].tecnica] = vistas.get(fichas[fid].tecnica, 0) + 1
     elegidos = {}
     hay_larga = False
     for g in ("integral", "parcial", "derivada", "algebra"):
@@ -638,7 +674,7 @@ def cola(fichas, entradas, dia, minimo=False, calendario=None, hitos=None):
         candidatas = [f for fid, f in disponibles.items()
                       if fid not in tarjetas and (f.escalon <= abierto or f.tecnica in examen)
                       and _cumple_requisitos(f, aciertos)]
-        nuevas = _ordenar_nuevas(candidatas, abierto, examen)
+        nuevas = _ordenar_nuevas(candidatas, abierto, examen, vistas)
         if vencidas or hay_larga:
             nuevas = [f for f in nuevas if not f.larga]  # una larga solo si no hay repasos
         reserva = 1 if plazas >= 2 else 0
@@ -700,14 +736,19 @@ def _previa_de_atascadas(fichas, apartadas, hechas_hoy):
     return None
 
 
-def _ordenar_nuevas(candidatas, abierto, examen):
+def _ordenar_nuevas(candidatas, abierto, examen, vistas=None):
     """Orden de las fichas nuevas de un grupo:
-    - primero la escalera (el escalon abierto mas alto, en el orden del temario);
-    - como mucho una ficha que abra un examen, en segundo lugar;
+    - con un examen cerca, primero una de sus tecnicas: la que menos fichas vistas tiene
+      (`vistas`: tecnica -> fichas ya vistas) y, a igualdad, la de escalon mas bajo (
+      antes iba segunda y casi nunca entraba, porque suele haber hueco para una sola nueva);
+    - despues la escalera (el escalon abierto mas alto, en el orden del temario);
     - sin repetir tecnica mientras haya otras."""
     escalera = sorted((f for f in candidatas if f.escalon <= abierto), key=lambda f: -f.escalon)
-    por_examen = [f for f in candidatas if f.escalon > abierto]
-    orden = escalera[:1] + por_examen[:1] + escalera[1:]
+    vistas = vistas or {}
+    de_examen = sorted((f for f in candidatas if f.tecnica in examen),
+                       key=lambda f: (vistas.get(f.tecnica, 0), f.escalon))
+    orden = de_examen[:1] + [f for f in escalera if f not in de_examen[:1]]
+    orden += [f for f in candidatas if f.escalon > abierto and f not in orden]
     resultado, vistas = [], set()
     for f in orden:  # primera pasada: una por tecnica
         if f.tecnica not in vistas:

@@ -448,6 +448,40 @@ def cargar_grafo(carpeta=CARPETA, fichas=None):
     return grafo
 
 
+# Nombre de cada tecnica, con su articulo: «Cuando usar la regla del producto».
+NOMBRES_TECNICA = {
+    "algebra": "el álgebra previa", "potencia": "la regla de la potencia", "cadena": "la regla de la cadena",
+    "producto": "la regla del producto", "cociente": "la regla del cociente",
+    "inversas": "las derivadas de funciones inversas", "logaritmica": "la derivación logarítmica",
+    "tabla": "las integrales inmediatas", "logaritmo": "las integrales de tipo logaritmo",
+    "lineal": "las integrales con argumento lineal", "sustitucion": "la sustitución",
+    "partes": "la integración por partes", "racionales": "las integrales racionales",
+    "cuadrado": "completar el cuadrado", "trigonometricas": "las integrales trigonométricas",
+    "irracionales": "las integrales irracionales", "constante": "la parcial con la otra letra constante",
+    "parcial_cadena": "la parcial con regla de la cadena", "exactitud": "la comprobación de EDO exacta",
+    "potencial": "la función potencial", "caracteristica": "la ecuación característica",
+    "comprobar_solucion": "comprobar una solución de una EDO", "wronskiano": "el wronskiano",
+    "forma_yp": "la solución particular", "pvi": "el problema de valor inicial",
+}
+
+
+def cargar_lecciones(carpeta=CARPETA):
+    """Lecciones de fichas/lecciones.toml: tecnica -> teoria, forma tipo, ejemplos
+    y ejemplo guiado. Sin el fichero, {}: se sigue con el ejemplo resuelto."""
+    ruta = Path(carpeta) / "lecciones.toml"
+    if not ruta.exists():
+        return {}
+    with open(ruta, "rb") as f:
+        datos = tomllib.load(f)
+    lecciones = {}
+    for d in datos.get("leccion", []):
+        tecnica = d.get("tecnica", "")
+        if tecnica in lecciones:
+            raise ErrorFicha(f"leccion repetida para la tecnica «{tecnica}»")
+        lecciones[tecnica] = d
+    return lecciones
+
+
 def cargar_ejemplos(carpeta=CARPETA, fichas=None):
     """Ejemplos resueltos de fichas/ejemplos.toml: tecnica -> dict con la variante
     construida (enunciado y resultado salen de la ficha, con la clave ya

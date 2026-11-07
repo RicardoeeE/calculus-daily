@@ -54,7 +54,8 @@ class TestSesionCompleta(unittest.TestCase):
         self.assertEqual(log[0]["confianza"], 4)
         self.assertEqual(log[1]["pistas"], 4)
         self.assertEqual(log[1]["causa"], tutela.CAUSAS["3"])
-        self.assertIn("El motor ve", texto)  # el «0» de la integral tiene diagnostico
+        if self.fichas[pendientes[1]["ficha"]].grupo == "integral":   # con examen cerca puede ser otra
+            self.assertIn("El motor ve", texto)  # el «0» de la integral tiene diagnostico
         notas = tutela.leer_notas()
         self.assertEqual((notas[0]["tipo"], notas[0]["valor"], notas[0]["texto"]), ("sensacion", 4, "hoy bien"))
         diario = (self.tmp / "sesiones.md").read_text(encoding="utf-8")
