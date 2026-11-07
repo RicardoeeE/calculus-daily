@@ -13,13 +13,21 @@ from calculo import rutas
 RAIZ = rutas.RAIZ
 PERMITIDOS = {
     "Practicar.bat", "otras-opciones", "usuario", "README.md", "README.es.md", "LICENSE", "programa",
-    "AGENTS.md", "CLAUDE.md",              # instrucciones para IA: norma global
     ".gitignore", ".gitattributes", ".git",
     ".venv", ".cache",                     # los crea el programa; ocultos, no van a git
     "desktop.ini", "Thumbs.db",            # los pone Windows a veces
 }
 _A_PROGRAMA_USUARIO = re.compile(r"programa[\\/]+(usuario|\.cache)\b", re.I)
 _ENLACE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
+
+
+def _ignorados(nombres):
+    """Los que git ignora (.gitignore o .git/info/exclude): ficheros locales que no van al repo."""
+    if not nombres:
+        return set()
+    r = subprocess.run(["git", "check-ignore", "--", *nombres], cwd=RAIZ,
+                       capture_output=True, text=True, encoding="utf-8")
+    return set(r.stdout.split()) if r.returncode in (0, 1) else set()
 
 
 def _git_raiz():
@@ -37,6 +45,7 @@ class TestRaizMinima(unittest.TestCase):
 
     def test_en_la_raiz_solo_lo_permitido(self):
         sobran = sorted(p.name for p in RAIZ.iterdir() if p.name not in PERMITIDOS)
+        sobran = sorted(set(sobran) - _ignorados(sobran))
         self.assertEqual(sobran, [], "en la raiz solo va lo de cada dia; lo demas a programa/ u otras-opciones/")
 
     def test_git_en_la_raiz(self):
