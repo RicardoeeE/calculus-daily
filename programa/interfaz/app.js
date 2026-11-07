@@ -18,14 +18,46 @@
   let estado = {};        // confianza, pistas, fallos, ultima, rendido...
   let tecnicasVistas = new Set();
   let sensacionElegida = null;
+  let modoExamen = false; // la cola es la extra del proximo examen
   let escapePulsado = false;
   let volverAlEjercicio = false;   // el ejemplo de «No se por donde empezar» vuelve al mismo ejercicio
   const violaciones = [];
 
   // ---------- utilidades ----------
 
+  const CAUSA_ESCRITA = {
+    1: "No sabía por dónde empezar",
+    2: "Elegí la técnica, pero me lié en un paso",
+    3: "Álgebra o una cuenta",
+    4: "Signo o constante",
+    5: "Creo que estaba bien",
+  };
+
+  // Por que sale este ejercicio, dicho sin la jerga del motor.
+  const COMO_SE_LLAMA = {
+    nueva: "Primer ejercicio de",
+    repaso: "Repaso de",
+    refuerzo: "Refuerzo de",
+    examen: "Para el examen:",
+    simulacro: "Simulacro:",
+  };
+
+  // Atajos que valen en cada pantalla.
+  const ATAJOS = {
+    ejemplo: "Esc para salir",
+    confianza: "Teclas 1 a 5 para elegir, Esc para salir",
+    respuesta: "Enter para comprobar, Esc para salir",
+    causa: "Teclas 1 a 4 para elegir, Esc para salir",
+    hecho: "Enter para seguir, Esc para salir",
+    final: "Teclas 1 a 5 para elegir, Esc para salir",
+    resumen: "Esc para cerrar",
+    vacia: "Esc para cerrar",
+  };
+
   function fase(nombre) {
     document.body.dataset.fase = nombre;
+    if (nombre in ATAJOS) $("pie").textContent = ATAJOS[nombre];
+    ajustarFormulas();
   }
 
   function mostrarPantalla(id) {
@@ -116,6 +148,8 @@
   function pintarEnunciado(antes, centro, despues, d) {
     pintarTrozos(antes, d.enunciado_antes_trozos, d.enunciado_antes || "");
     centro.textContent = "";
+    centro.classList.toggle("enunciado-formula", !!d.enunciado_latex);
+    centro.style.fontSize = "";
     if (d.enunciado_latex) {
       centro.appendChild(formula(d.enunciado_latex, d.enunciado, true));
       pintarTrozos(despues, d.enunciado_despues_trozos, d.enunciado_despues || "");
@@ -123,6 +157,17 @@
       pintarTrozos(centro, d.enunciado_trozos, d.enunciado);
       despues.textContent = "";
       antes.textContent = "";
+    }
+  }
+
+  // Una formula muy larga baja de tamano para caber, hasta un minimo; si aun no cabe, se desplaza.
+  function ajustarFormulas() {
+    for (const el of document.querySelectorAll(".enunciado-formula")) {
+      if (!el.offsetParent) continue;
+      el.style.fontSize = "";
+      if (el.scrollWidth <= el.clientWidth) continue;
+      const actual = parseFloat(getComputedStyle(el).fontSize);
+      el.style.fontSize = Math.max(19, Math.floor(actual * el.clientWidth / el.scrollWidth)) + "px";
     }
   }
 
@@ -178,6 +223,7 @@
     construirCausas();
     $("solo-dos").hidden = !!datos.minimo || cola.length <= 2;
     if (!cola.length) {
+      botonesExamen();
       mostrarPantalla("pantalla-vacia");
       fase("vacia");
       return;
@@ -186,9 +232,57 @@
     abrirEjercicio();
   }
 
+  // ---------- modo examen ----------
+
+  function textoFaltan(n) {
+    return n <= 0 ? "es hoy" : (n === 1 ? "falta 1 día" : "faltan " + n + " días");
+  }
+
+  // El boton de arriba cambia entre las dos colas; se ve entre ejercicios, nunca durante uno.
+  function botonesExamen() {
+    const ex = datos.examen;
+    const b = $("modo-examen");
+    b.hidden = !ex;
+    if (!ex) return;
+    b.textContent = modoExamen ? "Volver a la sesión de hoy" : "Preparar el " + ex.corto + " (" + textoFaltan(ex.faltan) + ")";
+    const mas = (modoExamen ? "Otros 5 de " : "5 más de ") + ex.corto;
+    $("mas-examen").textContent = mas;
+    $("mas-examen").hidden = false;
+    $("vacia-examen").textContent = mas;
+    $("vacia-examen").hidden = modoExamen;   // en examen, si esta vacia es que no quedan
+  }
+
+  async function cambiarModo(examen) {
+    if (!["leccion", "ejemplo", "confianza", "final", "vacia"].includes(document.body.dataset.fase)) return;
+    const r = await llamar(examen ? "examen" : "cola");
+    if (!r.ok) {
+      aviso("No se pudo cambiar de sesión. Sigue con la que tienes.");
+      return;
+    }
+    modoExamen = examen;
+    $("titulo").textContent = examen ? "Preparar " + datos.examen.nombre : "Sesión de hoy";
+    cola = r.ejercicios || [];
+    tecnicasVistas = new Set();
+    indice = 0;
+    hechos = 0;
+    $("solo-dos").hidden = examen || !!datos.minimo || cola.length <= 2;
+    if (!cola.length) {
+      actual = null;
+      progreso();
+      botonesExamen();
+      $("vacia-titulo").textContent = examen ? "No quedan ejercicios de este examen" : "Hoy ya está todo hecho";
+      $("vacia-texto").textContent = examen ? "Ya has hecho todos los que hay por hoy."
+        : "No queda nada en la cola de hoy. Buen trabajo.";
+      mostrarPantalla("pantalla-vacia");
+      fase("vacia");
+      return;
+    }
+    abrirEjercicio();
+  }
+
   // «Hoy solo 2»: el dia minimo del motor (como `ventana --minimo`). Solo al empezar.
   async function soloDos() {
-    if (hechos > 0 || !["ejemplo", "confianza"].includes(document.body.dataset.fase)) return;
+    if (hechos > 0 || !["leccion", "ejemplo", "confianza"].includes(document.body.dataset.fase)) return;
     $("solo-dos").hidden = true;
     const r = await llamar("minimo");
     if (!r.ok) return;
@@ -199,7 +293,7 @@
       actual = null;
       progreso();
       $("vacia-titulo").textContent = "Hoy ya cuenta";
-      $("vacia-texto").textContent = "Los 2 del día mínimo ya están hechos. Buen trabajo.";
+      $("vacia-texto").textContent = "Los 2 del día mínimo ya están hechos.";
       mostrarPantalla("pantalla-vacia");
       fase("vacia");
       return;
@@ -214,7 +308,7 @@
       const b = document.createElement("button");
       b.type = "button";
       b.dataset.causa = c.clave;
-      b.textContent = c.clave + ". " + c.texto;
+      b.textContent = c.clave + ". " + (CAUSA_ESCRITA[c.clave] || c.texto);
       b.addEventListener("click", () => elegirCausa(c.clave));
       cont.appendChild(b);
     }
@@ -222,15 +316,24 @@
 
   // ---------- ejemplo resuelto (completo o con huecos) ----------
 
-  function abrirEjercicio() {
+  async function abrirEjercicio() {
     actual = cola[indice];
     estado = { confianza: null, pistas: actual.pistas_vistas || 0, fallos: actual.fallos || 0,
                ultima: null, rendido: false, reclamo: false, respuesta: null,
                solucion: !!actual.solucion_disponible, ocupado: false };
     progreso();
+    botonesExamen();
     const ej = actual.ejemplo;
     if (ej && !tecnicasVistas.has(ej.tecnica)) {
       tecnicasVistas.add(ej.tecnica);
+      if (actual.leccion) {
+        fase("carga");
+        const r = await llamar("leccion", ej.tecnica);
+        if (r.ok) {
+          abrirLeccion(r.leccion, null);
+          return;
+        }
+      }
       ensenarEjemplo(ej);
     } else {
       ensenarEjercicio();
@@ -240,13 +343,13 @@
   function ensenarEjemplo(ej) {
     const conHuecos = !!ej.huecos;
     $("ejemplo-titulo").textContent = conHuecos
-      ? "Ejemplo con huecos (" + ej.tecnica + "): destapa los pasos o escribe el resultado; sin nota ni registro"
-      : (volverAlEjercicio ? "Ejemplo resuelto de " + ej.tecnica + ": léelo y vuelve a tu ejercicio"
-                           : "Antes, un ejemplo resuelto de " + ej.tecnica);
+      ? "Ejemplo con huecos de " + (ej.nombre || ej.tecnica) + ": destapa los pasos o escribe el resultado. No lleva nota."
+      : (volverAlEjercicio ? "Ejemplo resuelto de " + (ej.nombre || ej.tecnica) + ": léelo y vuelve a tu ejercicio"
+                           : "Antes, un ejemplo resuelto de " + (ej.nombre || ej.tecnica));
     const idea = $("ejemplo-idea");
     idea.textContent = "";
     if (ej.idea) {
-      idea.appendChild(document.createTextNode("Cuándo se usa: "));
+      idea.appendChild(document.createTextNode("Cuándo usar " + (ej.nombre || ej.tecnica) + ": "));
       anadirTrozos(idea, ej.idea_trozos, ej.idea);
     }
     pintarEnunciado($("ejemplo-enunciado-antes"), $("ejemplo-enunciado"), $("ejemplo-enunciado-despues"), ej);
@@ -282,6 +385,199 @@
     mostrarPantalla("pantalla-ejemplo");
     fase("ejemplo");
     (conHuecos ? $("ejemplo-respuesta") : $("ejemplo-seguir")).focus();
+  }
+
+  // ---------- leccion: teoria, ejemplos y ejemplo guiado; sin nota ni registro ----------
+
+  let leccion = null;       // { datos, etapa, volver, paso, acertados }
+  const ETAPAS = ["teoria", "ejemplos", "guiado"];
+
+  function abrirLeccion(datosLeccion, volver) {
+    leccion = { datos: datosLeccion, etapa: 0, volver, paso: 0, resuelto: false };
+    $("leccion-tema").textContent = datosLeccion.tema || "";
+    $("leccion-titulo").textContent = datosLeccion.titulo || "";
+    $("leccion-saltar").textContent = volver ? "Volver al ejercicio" : "Ir directo al ejercicio";
+    mostrarPantalla("pantalla-leccion");
+    fase("leccion");
+    pintarLeccion();
+  }
+
+  function salirDeLeccion() {
+    if (!leccion) return;
+    const volver = leccion.volver;
+    leccion = null;
+    if (volver) {
+      mostrarPantalla("pantalla-ejercicio");
+      fase(volver);
+      (volver === "respuesta" ? $("respuesta") : $("bloque-confianza")).focus();
+    } else {
+      ensenarEjercicio();
+    }
+  }
+
+  function bloque(padre, titulo, clase) {
+    const s = document.createElement("section");
+    s.className = "bloque " + (clase || "");
+    if (titulo) {
+      const h = document.createElement("h3");
+      h.textContent = titulo;
+      s.appendChild(h);
+    }
+    padre.appendChild(s);
+    return s;
+  }
+
+  function parrafo(padre, trozos, clase) {
+    const p = document.createElement("p");
+    if (clase) p.className = clase;
+    pintarTrozos(p, trozos, "");
+    padre.appendChild(p);
+    return p;
+  }
+
+  function listaTrozos(padre, etiqueta, items) {
+    const l = document.createElement(etiqueta);
+    l.className = "pasos";
+    for (const t of items || []) {
+      const li = document.createElement("li");
+      pintarTrozos(li, t, "");
+      l.appendChild(li);
+    }
+    padre.appendChild(l);
+    return l;
+  }
+
+  function pintarLeccion() {
+    const d = leccion.datos;
+    const etapa = ETAPAS[leccion.etapa];
+    for (const li of document.querySelectorAll(".hitos li")) {
+      const i = ETAPAS.indexOf(li.dataset.etapa);
+      li.classList.toggle("actual", i === leccion.etapa);
+      li.classList.toggle("hecho", i < leccion.etapa);
+    }
+    const c = $("leccion-cuerpo");
+    c.textContent = "";
+    if (etapa === "teoria") {
+      parrafo(bloque(c, "Para qué sirve"), d.que_es);
+      parrafo(bloque(c, "Cómo reconocerla"), d.reconocer);
+      parrafo(bloque(c, "Forma tipo", "forma-tipo"), d.forma, "forma");
+      listaTrozos(bloque(c, "Cómo aplicarla"), "ol", d.pasos);
+      if (d.ojo && d.ojo.length) listaTrozos(bloque(c, "Ojo", "ojo"), "ul", d.ojo);
+    } else if (etapa === "ejemplos") {
+      (d.ejemplo || []).forEach((ej, i) => {
+        const s = bloque(c, "Ejemplo " + (i + 1), "ejemplo-leccion");
+        parrafo(s, ej.enunciado, "enunciado-leccion");
+        listaTrozos(s, "ol", ej.pasos);
+        const r = parrafo(s, ej.resultado, "resultado");
+        r.insertBefore(document.createTextNode("Resultado: "), r.firstChild);
+      });
+    } else {
+      pintarGuiado(c, d.guiado);
+    }
+    $("leccion-atras").hidden = leccion.etapa === 0;
+    actualizarSiguiente();
+    window.scrollTo(0, 0);
+    $("leccion-siguiente").focus({ preventScroll: true });   // cada parte se lee desde arriba
+  }
+
+  function actualizarSiguiente() {
+    const b = $("leccion-siguiente");
+    const etapa = ETAPAS[leccion.etapa];
+    if (etapa === "teoria") {
+      b.textContent = "Ver ejemplos";
+    } else if (etapa === "ejemplos") {
+      b.textContent = "Hacer uno guiado";
+    } else {
+      const pasos = leccion.datos.guiado.paso;
+      const ultimo = leccion.paso >= pasos.length;
+      b.textContent = ultimo ? (leccion.volver ? "Volver al ejercicio" : "Empezar el ejercicio") : "Siguiente paso";
+      b.disabled = !ultimo && !leccion.resuelto;
+      $("leccion-saltar").hidden = ultimo;
+      return;
+    }
+    b.disabled = false;
+    $("leccion-saltar").hidden = false;
+  }
+
+  function pintarGuiado(c, g) {
+    const s = bloque(c, "Resuélvelo paso a paso. No lleva nota", "guiado");
+    parrafo(s, g.enunciado, "enunciado-leccion");
+    const hechos_ = document.createElement("ol");
+    hechos_.className = "guiado-hechos";
+    g.paso.slice(0, leccion.paso).forEach((p) => {
+      const li = document.createElement("li");
+      pintarTrozos(li, p.opciones.find((o) => o.correcta).texto, "");
+      hechos_.appendChild(li);
+    });
+    if (hechos_.childNodes.length) s.appendChild(hechos_);
+    if (leccion.paso >= g.paso.length) {
+      parrafo(s, g.cierre, "guiado-cierre");
+      return;
+    }
+    const p = g.paso[leccion.paso];
+    const cab = document.createElement("p");
+    cab.className = "etiqueta";
+    cab.textContent = "Paso " + (leccion.paso + 1) + " de " + g.paso.length;
+    s.appendChild(cab);
+    parrafo(s, p.pregunta, "pregunta");
+    const ops = document.createElement("div");
+    ops.className = "opciones";
+    ops.setAttribute("role", "group");
+    const nota = document.createElement("p");
+    nota.className = "opcion-nota";
+    nota.setAttribute("aria-live", "polite");
+    p.opciones.forEach((o) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "opcion";
+      b.dataset.correcta = o.correcta ? "1" : "";
+      pintarTrozos(b, o.texto, "");
+      b.addEventListener("click", () => {
+        pintarTrozos(nota, o.porque, "");
+        nota.dataset.estado = o.correcta ? "bien" : "mal";
+        b.classList.add(o.correcta ? "bien" : "mal");
+        if (o.correcta) {
+          for (const x of ops.querySelectorAll("button")) x.disabled = true;
+          leccion.resuelto = true;
+          actualizarSiguiente();
+          $("leccion-siguiente").focus({ preventScroll: true });
+        }
+      });
+      ops.appendChild(b);
+    });
+    s.appendChild(ops);
+    s.appendChild(nota);
+  }
+
+  function leccionSiguiente() {
+    if (document.body.dataset.fase !== "leccion" || !leccion) return;
+    if (ETAPAS[leccion.etapa] === "guiado") {
+      if (leccion.paso >= leccion.datos.guiado.paso.length) {
+        salirDeLeccion();
+        return;
+      }
+      if (!leccion.resuelto) return;
+      leccion.paso += 1;
+      leccion.resuelto = false;
+    } else {
+      leccion.etapa += 1;
+    }
+    pintarLeccion();
+  }
+
+  function leccionAtras() {
+    if (document.body.dataset.fase !== "leccion" || !leccion || leccion.etapa === 0) return;
+    leccion.etapa -= 1;
+    leccion.paso = 0;
+    leccion.resuelto = false;
+    pintarLeccion();
+  }
+
+  async function verTeoria() {
+    const f = document.body.dataset.fase;
+    if (!["confianza", "respuesta"].includes(f) || !actual || !actual.leccion_disponible) return;
+    const r = await llamar("leccion", actual.tecnica);
+    if (r.ok) abrirLeccion(r.leccion, f);
   }
 
   function destaparTodo() {
@@ -325,8 +621,12 @@
 
   function ensenarEjercicio() {
     const e = actual;
-    $("ej-etiqueta").textContent = e.etiqueta || e.motivo || "";
-    $("ej-tecnica").textContent = e.tecnica || "";
+    const nombre = e.tecnica_nombre || e.tecnica || "";
+    const frase = ((COMO_SE_LLAMA[e.etiqueta || e.motivo] || "") + " " + nombre).replace(/\bde el\b/, "del").trim();
+    $("ej-etiqueta").textContent = "";
+    $("ej-tecnica").textContent = frase.charAt(0).toUpperCase() + frase.slice(1);
+    $("enunciado").dataset.numero = "(" + (e.numero || indice + 1) + ")";
+    $("ver-teoria").hidden = !e.leccion_disponible;
     pintarEnunciado($("enunciado-antes"), $("enunciado"), $("enunciado-despues"), e);
     const como = $("como-responder");
     como.textContent = "";
@@ -356,13 +656,14 @@
     actualizarBotones();
     mostrarPantalla("pantalla-ejercicio");
     fase("confianza");
-    $("bloque-confianza").querySelector("button").focus();
+    $("bloque-confianza").focus();
   }
 
   async function elegirConfianza(n) {
     if (document.body.dataset.fase !== "confianza") return;
     estado.confianza = n;
     $("solo-dos").hidden = true;
+    $("modo-examen").hidden = true;
     for (const b of document.querySelectorAll("[data-confianza]")) {
       b.classList.toggle("elegido", b.dataset.confianza === String(n));
     }
@@ -578,7 +879,7 @@
     if (c.ok && c.necesaria) {
       $("bloque-causa").hidden = false;
       fase("causa");
-      $("causas").querySelector("button").focus();
+      $("bloque-causa").focus();
       return;
     }
     await registrar(null);
@@ -641,9 +942,11 @@
     } else {
       actual = null;
       progreso();
+      botonesExamen();
+      $("modo-examen").hidden = !modoExamen;   // al acabar la de hoy basta el boton de la tarjeta
       mostrarPantalla("pantalla-final");
       fase("final");
-      $("final-preguntas").querySelector("button").focus();
+      $("final-preguntas").focus();
     }
   }
 
@@ -728,7 +1031,7 @@
       if (!$("confirmar-solucion").hidden) { seguirSinSolucion(); return; }
       if (f === "resumen" || f === "vacia" || escapePulsado) { salir(); return; }
       escapePulsado = true;
-      aviso("Pulsa Esc otra vez para salir. Lo registrado queda guardado y puedes retomar la cola después.");
+      aviso("Pulsa Esc otra vez para salir. Lo hecho queda guardado y puedes seguir después.");
       setTimeout(() => { escapePulsado = false; }, 4000);
       return;
     }
@@ -775,10 +1078,18 @@
     $("solucion-no").addEventListener("click", seguirSinSolucion);
     $("no-se").addEventListener("click", noSe);
     $("solo-dos").addEventListener("click", soloDos);
+    $("leccion-siguiente").addEventListener("click", leccionSiguiente);
+    $("leccion-atras").addEventListener("click", leccionAtras);
+    $("leccion-saltar").addEventListener("click", salirDeLeccion);
+    $("ver-teoria").addEventListener("click", verTeoria);
+    $("modo-examen").addEventListener("click", () => cambiarModo(!modoExamen));
+    $("mas-examen").addEventListener("click", () => cambiarModo(true));
+    $("vacia-examen").addEventListener("click", () => cambiarModo(true));
     $("reescribir").addEventListener("click", reescribir);
     $("memoria-comprobar").addEventListener("click", comprobarMemoria);
     $("estaba-bien").addEventListener("click", estabaBien);
     $("ver-grafica").addEventListener("click", verGrafica);
+    window.addEventListener("resize", ajustarFormulas);
     $("causa-saltar").addEventListener("click", () => {
       if (document.body.dataset.fase === "causa") { $("bloque-causa").hidden = true; registrar(null); }
     });
@@ -797,6 +1108,25 @@
       try { api && api.anotar_error("CSP: " + ev.violatedDirective + " " + ev.blockedURI); } catch (_) { /* nada */ }
     });
   }
+
+  // Solo para el humo: recorre la leccion abierta, con un fallo y el acierto en cada paso guiado.
+  window.leccionCompletaPrueba = () => {
+    $("leccion-siguiente").click();
+    const ejemplos = $("leccion-cuerpo").querySelectorAll(".ejemplo-leccion").length;
+    $("leccion-siguiente").click();
+    let pasos = 0, explicaciones = 0;
+    while (document.querySelector(".opcion")) {
+      const fallo = document.querySelector('.opcion[data-correcta=""]');
+      fallo.click();
+      explicaciones += document.querySelector(".opcion-nota").dataset.estado === "mal" ? 1 : 0;
+      document.querySelector('.opcion[data-correcta="1"]').click();
+      $("leccion-siguiente").click();
+      pasos += 1;
+    }
+    const fin = $("leccion-siguiente").textContent;
+    $("leccion-siguiente").click();
+    return { ejemplos, pasos, explicaciones, fin };
+  };
 
   // Solo para el humo (`practica.py ventana --prueba`), que conduce la interfaz con evaluate_js.
   window.estadoPrueba = () => ({ ficha: actual && actual.ficha, semilla: actual && actual.semilla,

@@ -11,8 +11,9 @@
 <body data-fase="carga">
 <header class="cabecera">
   <div class="cabecera-fila">
-    <h1>Sesión de hoy</h1>
+    <h1 id="titulo">Sesión de hoy</h1>
     <span class="cabecera-derecha">
+      <button id="modo-examen" type="button" class="discreto" hidden title="Ejercicios extra del próximo examen. No gastan los de hoy."></button>
       <button id="solo-dos" type="button" class="discreto" hidden title="Día mínimo: 2 ejercicios. Con 2 el día cuenta.">Hoy solo 2</button>
       <span id="progreso-texto" class="progreso-texto"></span>
     </span>
@@ -30,6 +31,24 @@
   <section id="aviso-revision" class="tarjeta suave" hidden>
     <h2>Revisión de la semana</h2>
     <ul id="revision-lineas"></ul>
+  </section>
+
+  <section id="pantalla-leccion" class="pantalla" hidden>
+    <div class="tarjeta leccion">
+      <p class="etiqueta" id="leccion-tema"></p>
+      <h2 id="leccion-titulo" class="leccion-titulo"></h2>
+      <ol class="hitos" aria-label="Partes de la lección">
+        <li data-etapa="teoria">Teoría</li>
+        <li data-etapa="ejemplos">Ejemplos</li>
+        <li data-etapa="guiado">Guiado</li>
+      </ol>
+      <div id="leccion-cuerpo" class="leccion-cuerpo"></div>
+      <div class="acciones leccion-acciones">
+        <button id="leccion-atras" type="button">Atrás</button>
+        <button id="leccion-siguiente" type="button" class="principal"></button>
+        <button id="leccion-saltar" type="button" class="discreto"></button>
+      </div>
+    </div>
   </section>
 
   <section id="pantalla-ejemplo" class="pantalla" hidden>
@@ -57,14 +76,14 @@
 
   <section id="pantalla-ejercicio" class="pantalla" hidden>
     <div class="tarjeta">
-      <p class="etiqueta"><span id="ej-etiqueta"></span> · <span id="ej-tecnica"></span></p>
+      <div class="etiqueta-fila"><p class="etiqueta"><span id="ej-etiqueta"></span> <span id="ej-tecnica"></span></p><button id="ver-teoria" type="button" class="discreto" hidden>Ver teoría</button></div>
       <p id="enunciado-antes" class="enunciado-texto"></p>
       <div id="enunciado" class="enunciado" aria-live="polite"></div>
       <p id="enunciado-despues" class="enunciado-texto"></p>
       <p id="como-responder" class="tenue pequeno"></p>
     </div>
 
-    <div id="bloque-confianza" class="tarjeta" hidden>
+    <div id="bloque-confianza" class="tarjeta" tabindex="-1" hidden>
       <p class="pregunta">¿Lo sacas? Elige tu confianza (teclas 1 a 5)</p>
       <div class="botones-escala" role="group" aria-label="Confianza">
         <button type="button" data-confianza="1">1<span>ni idea</span></button>
@@ -83,7 +102,7 @@
       </div>
       <ul id="avisos-lectura" class="avisos"></ul>
       <div class="acciones">
-        <button id="comprobar" type="button" class="principal">Comprobar <kbd>Enter</kbd></button>
+        <button id="comprobar" type="button" class="principal">Comprobar</button>
         <button id="pista" type="button">Pista</button>
         <button id="no-se" type="button" hidden>No sé por dónde empezar</button>
         <button id="ver-solucion" type="button" hidden>Ver la solución</button>
@@ -102,7 +121,7 @@
       <p id="solucion-texto" class="solucion" hidden></p>
     </div>
 
-    <div id="bloque-causa" class="tarjeta" hidden>
+    <div id="bloque-causa" class="tarjeta" tabindex="-1" hidden>
       <p class="pregunta">¿Qué ha pasado? (teclas 1 a 4)</p>
       <div id="causas" class="botones-lista" role="group" aria-label="Qué ha pasado"></div>
       <div class="acciones"><button id="causa-saltar" type="button">Saltar</button></div>
@@ -121,12 +140,12 @@
           <p id="memoria-mensaje" class="mensaje" aria-live="polite"></p>
         </div>
       </div>
-      <div class="acciones"><button id="siguiente" type="button" class="principal">Siguiente <kbd>Enter</kbd></button></div>
+      <div class="acciones"><button id="siguiente" type="button" class="principal">Siguiente</button></div>
     </div>
   </section>
 
   <section id="pantalla-final" class="pantalla" hidden>
-    <div id="final-preguntas" class="tarjeta">
+    <div id="final-preguntas" class="tarjeta" tabindex="-1">
       <h2>Fin de la sesión</h2>
       <p class="pregunta">¿Cómo te has sentido hoy? (opcional)</p>
       <div class="botones-escala" role="group" aria-label="Sensación">
@@ -140,7 +159,7 @@
       <textarea id="comentario" rows="2" maxlength="1000"></textarea>
       <label for="queja">¿Alguna queja o comentario? (opcional)</label>
       <textarea id="queja" rows="2" maxlength="1000"></textarea>
-      <div class="acciones"><button id="terminar" type="button" class="principal">Guardar y terminar</button></div>
+      <div class="acciones"><button id="mas-examen" type="button" hidden></button><button id="terminar" type="button" class="principal">Guardar y terminar</button></div>
     </div>
     <div id="final-resumen" class="tarjeta" hidden>
       <h2>Resumen</h2>
@@ -153,15 +172,15 @@
   <section id="pantalla-vacia" class="pantalla" hidden>
     <div class="tarjeta">
       <h2 id="vacia-titulo">Hoy ya está todo hecho</h2>
-      <p id="vacia-texto">No queda nada en la cola de hoy. Buen trabajo.</p>
-      <div class="acciones"><button id="salir-vacia" type="button" class="principal">Cerrar</button></div>
+      <p id="vacia-texto">Mañana habrá más.</p>
+      <div class="acciones"><button id="vacia-examen" type="button" hidden></button><button id="salir-vacia" type="button" class="principal">Cerrar</button></div>
     </div>
   </section>
 </main>
 
 <div id="aviso" class="aviso" role="alert" hidden></div>
 <div id="saliendo" class="saliendo" hidden><p id="saliendo-texto" aria-live="polite"></p></div>
-<footer class="pie tenue pequeno" id="pie">Enter comprobar · 1–5 confianza · Esc salir</footer>
+<footer class="pie tenue pequeno" id="pie">Esc para salir</footer>
 
 <script src="katex/katex.min.js"></script>
 <script src="app.js"></script>
