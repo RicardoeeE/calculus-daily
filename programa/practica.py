@@ -3,7 +3,8 @@
 Uso en la terminal:
   python practica.py hoy [--minimo] [--sin-git]   sesion interactiva (5 ejercicios; minimo: 2)
   python practica.py ventana [--minimo]   la misma sesion en una ventana (sale con 3 si no se puede abrir)
-  pythonw practica.py ventana --respaldo-terminal   (Practicar.bat) sin consola; si no abre, Terminal.bat
+  pythonw practica.py ventana --respaldo-reparar   (Practicar.bat) sin consola; si no abre, Practicar.bat reparar
+  pythonw practica.py ventana --respaldo-terminal   (Practicar.bat reparar) si no abre, Terminal.bat
   python practica.py informe            progreso, examenes, confianza y repasos previstos
   python practica.py doctor [--rapido]  comprueba instalacion, fichas, registro, git y datos
   python practica.py datos [--recuperar] [--copiar]   tus datos: intentos, copias y si falta algo
@@ -576,9 +577,25 @@ def _ventana(a):
             print(f"No se puede abrir la ventana ({exc}). Sigo en la terminal.")
         else:
             codigo = ventana.abrir(minimo=a.minimo, prueba=a.prueba, captura=a.captura)
-    if codigo == 3 and a.respaldo_terminal and not a.prueba:
-        _abrir_terminal(a.minimo)
+    if codigo == 3 and not a.prueba:
+        if a.respaldo_reparar:
+            _abrir_reparar()
+        elif a.respaldo_terminal:
+            _abrir_terminal(a.minimo)
     return codigo
+
+
+def _abrir_reparar():
+    """Respaldo del arranque rapido: Practicar.bat salta el doctor y abre
+    la ventana directamente; si no abre, se relanza `Practicar.bat reparar` en una
+    consola nueva, que es el camino completo de antes (doctor, reinstalar, terminal)."""
+    bat = rutas.RAIZ / "Practicar.bat"
+    try:
+        subprocess.Popen(["cmd.exe", "/c", str(bat), "reparar"], cwd=str(rutas.RAIZ),
+                         creationflags=getattr(subprocess, "CREATE_NEW_CONSOLE", 0), close_fds=True)
+        print("Respaldo: la ventana no abrio; Practicar.bat revisa el entorno en una consola.")
+    except OSError as exc:
+        print(f"Respaldo: no se pudo abrir Practicar.bat ({exc}).")
 
 
 def _abrir_terminal(minimo=False):
@@ -707,6 +724,8 @@ def main(argv=None):
     s.add_argument("--captura", help="con --prueba: guardar una captura PNG de la ventana")
     s.add_argument("--respaldo-terminal", action="store_true",
                    help="si la ventana no abre o se cae, abrir Terminal.bat en una consola nueva")
+    s.add_argument("--respaldo-reparar", action="store_true",
+                   help="arranque rapido de Practicar.bat: si no abre, relanzar Practicar.bat reparar")
     s = sub.add_parser("examen", help="modo examen: sesion extra del proximo examen")
     s.add_argument("--nombre", help="trozo del nombre del examen (p. ej. «Parcial 1»); por defecto, el proximo")
     s.add_argument("--n", type=int, default=5, help="numero de ejercicios (5 por defecto)")

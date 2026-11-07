@@ -353,8 +353,28 @@ class TestResumenYDoctor(Carpeta):
 
 class TestArranqueSinConsola(unittest.TestCase):
     def args(self, **k):
-        base = {"minimo": False, "prueba": False, "captura": None, "respaldo_terminal": True}
+        base = {"minimo": False, "prueba": False, "captura": None, "respaldo_terminal": True,
+                "respaldo_reparar": False}
         return mock.Mock(**{**base, **k})
+
+    def test_arranque_rapido_relanza_practicar_reparar(self):
+        """Desde el camino rapido de Practicar.bat, si no abre, el camino completo."""
+        from calculo import ventana
+        with mock.patch.object(ventana, "abrir", return_value=ventana.SIN_VENTANA), \
+                mock.patch.object(practica, "_abrir_terminal") as terminal, \
+                mock.patch.object(practica, "_abrir_reparar") as reparar, redirect_stdout(io.StringIO()):
+            self.assertEqual(practica._ventana(self.args(respaldo_terminal=False, respaldo_reparar=True)), 3)
+        reparar.assert_called_once_with()
+        terminal.assert_not_called()
+
+    def test_abrir_reparar_consola_nueva(self):
+        with mock.patch.object(practica.subprocess, "Popen") as popen, redirect_stdout(io.StringIO()):
+            practica._abrir_reparar()
+        args, k = popen.call_args
+        self.assertEqual(args[0][:2], ["cmd.exe", "/c"])
+        self.assertTrue(args[0][2].endswith("Practicar.bat"))
+        self.assertEqual(args[0][3:], ["reparar"])
+        self.assertEqual(k["creationflags"], subprocess.CREATE_NEW_CONSOLE)
 
     def test_respaldo_si_no_abre(self):
         from calculo import ventana
@@ -443,6 +463,16 @@ class TestBats(unittest.TestCase):
         texto = (rutas.RAIZ / "Practicar.bat").read_text(encoding="utf-8")
         comprobar = texto[texto.index(":comprobar"):texto.index(":practicar")]
         self.assertEqual(comprobar.count("practica.py doctor --rapido >nul"), 2)
+
+    def test_practicar_arranque_rapido(self):
+        """Con el entorno hecho, la ventana sale sin doctor ni comprobaciones
+        (cada paso era un parpadeo de consola); `reparar` fuerza el camino completo."""
+        texto = (rutas.RAIZ / "Practicar.bat").read_text(encoding="utf-8")
+        rapido = texto[:texto.index(":preparar")]
+        self.assertIn('if /i "%~1"=="reparar" goto preparar', rapido)
+        self.assertIn(r'start "" "%PYW%" programa\practica.py ventana --respaldo-reparar', rapido)
+        ordenes = [l for l in rapido.splitlines() if l.strip() and not l.lstrip().startswith("rem")]
+        self.assertFalse([l for l in ordenes if "doctor" in l or '"%PY%"' in l], ordenes)
 
     def test_comprobar_datos_bat(self):
         datos_ = (rutas.RAIZ / "otras-opciones" / "Comprobar-datos.bat").read_bytes()

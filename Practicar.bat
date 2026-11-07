@@ -7,7 +7,19 @@ rem asi no depende de que Python haya en el PATH ni de lo que tenga instalado.
 chcp 65001 >nul <nul
 cd /d "%~dp0"
 set "PY=.venv\Scripts\python.exe"
+set "PYW=.venv\Scripts\pythonw.exe"
 
+rem Arranque suave: con el entorno ya hecho, la ventana se abre directamente y
+rem esta consola se cierra al momento, sin doctor ni comprobaciones (cada una era un
+rem parpadeo de 1-2 s). Si la ventana no abre, ella misma relanza este .bat con
+rem "reparar" en una consola nueva: el camino completo de siempre (doctor, reinstalar...).
+if /i "%~1"=="reparar" goto preparar
+if not exist "%PYW%" goto preparar
+if not exist ".cache" goto preparar
+start "" "%PYW%" programa\practica.py ventana --respaldo-reparar
+exit /b 0
+
+:preparar
 if exist "%PY%" goto comprobar
 echo Primera vez en este equipo: preparo el entorno (sympy, fsrs y la ventana). Tarda unos 3 minutos y solo se hace una vez.
 where py >nul 2>&1
@@ -64,7 +76,6 @@ if errorlevel 1 goto terminal
 rem pythonw (sin consola) y desacoplada con start: esta consola se cierra ya
 rem y cerrarla no cierra la ventana. Si la ventana no abre (WebView2...) o se cae,
 rem ella misma abre otras-opciones\Terminal.bat en una consola nueva (--respaldo-terminal).
-set "PYW=.venv\Scripts\pythonw.exe"
 if not exist "%PYW%" goto terminal
 start "" "%PYW%" programa\practica.py ventana --respaldo-terminal
 exit /b 0

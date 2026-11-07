@@ -153,12 +153,16 @@ def _recordatorio(consultar=None):
     if str(Path(ruta)).lower().rstrip("\\/") != str(esperado).lower():
         return [(None, f"recordatorio: la tarea «{TAREA}» usa {ruta}, no la de esta carpeta ({esperado}); "
                        "reinstalala con programa\\herramientas\\instalar-recordatorio.ps1")]
+    if "--headless" not in (xml or ""):   # sin conhost --headless parpadea una consola
+        return [(None, f"recordatorio: la tarea «{TAREA}» abre una consola un instante en cada aviso; "
+                       "reinstalala con programa\\herramientas\\instalar-recordatorio.ps1")]
     return [(True, f"recordatorio: tarea «{TAREA}» instalada")]
 
 
 def _git():
     def git(*args, timeout=15):
-        return subprocess.run(["git", *args], cwd=RAIZ, capture_output=True, text=True, timeout=timeout)
+        return subprocess.run(["git", *args], cwd=RAIZ, capture_output=True, text=True, timeout=timeout,
+                              creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
     try:
         if git("rev-parse", "--is-inside-work-tree").returncode:
             return [(None, "la carpeta no es un repositorio git: se practica igual, sin copia en GitHub")]

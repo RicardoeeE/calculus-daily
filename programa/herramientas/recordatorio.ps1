@@ -143,5 +143,13 @@ if ($SoloDecidir) {
     exit 0
 }
 if ($r -eq 6 -and -not $Prueba) {
-    Start-Process -FilePath $bat -WorkingDirectory $raiz
+    # La ventana directamente con pythonw (sin consola), como el arranque rapido de
+    # Practicar.bat; si no abre, ella relanza Practicar.bat reparar. Sin entorno, el .bat.
+    $pythonw = Join-Path $raiz '.venv\Scripts\pythonw.exe'
+    if ((Test-Path -LiteralPath $pythonw) -and (Test-Path -LiteralPath (Join-Path $raiz '.cache'))) {
+        Start-Process -FilePath $pythonw -ArgumentList @("`"$guion`"", 'ventana', '--respaldo-reparar') `
+            -WorkingDirectory $raiz
+    } else {
+        Start-Process -FilePath $bat -WorkingDirectory $raiz
+    }
 }

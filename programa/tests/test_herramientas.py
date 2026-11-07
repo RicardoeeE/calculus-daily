@@ -54,9 +54,24 @@ class TestBats(unittest.TestCase):
 class TestDoctorRecordatorio(unittest.TestCase):
     """OJO si la tarea programada apunta a otro recordatorio.ps1."""
 
-    def xml(self, ruta):
-        return (f'<Exec><Command>powershell.exe</Command><Arguments>-NoProfile -File "{ruta}"'
-                '</Arguments></Exec>')
+    def xml(self, ruta, lanzador="<Command>conhost.exe</Command><Arguments>--headless powershell.exe"):
+        return f'<Exec>{lanzador} -NoProfile -File "{ruta}"</Arguments></Exec>'
+
+    def test_lanzador_antiguo_parpadea(self):
+        """La tarea de antes (powershell.exe directo) parpadeaba una consola."""
+        viejo = "<Command>powershell.exe</Command><Arguments>"
+        r = doctor._recordatorio(lambda: (0, self.xml(rutas.HERRAMIENTAS / "recordatorio.ps1", viejo)))
+        self.assertIsNone(r[0][0])
+        self.assertIn("consola", r[0][1])
+
+    def test_instalar_sin_consola(self):
+        texto = (rutas.HERRAMIENTAS / "instalar-recordatorio.ps1").read_text(encoding="utf-8")
+        self.assertIn("-Execute 'conhost.exe'", texto)
+        self.assertIn("--headless powershell.exe", texto)
+
+    def test_si_abre_la_ventana_sin_consola(self):
+        texto = PS1.read_text(encoding="utf-8")
+        self.assertIn("'ventana', '--respaldo-reparar'", texto)
 
     def test_sin_tarea_nada(self):
         self.assertEqual(doctor._recordatorio(lambda: (1, "")), [])

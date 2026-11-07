@@ -10,8 +10,10 @@
 $nombre = 'calculo-diario recordatorio'
 $script = Join-Path $PSScriptRoot 'recordatorio.ps1'
 
-$accion = New-ScheduledTaskAction -Execute 'powershell.exe' `
-    -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$script`""
+# conhost --headless lanza PowerShell sin consola. Con -WindowStyle Hidden solo,
+# la consola parpadeaba en cada disparo (hasta 5 al dia), saliera el aviso o no.
+$accion = New-ScheduledTaskAction -Execute 'conhost.exe' `
+    -Argument "--headless powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$script`""
 
 $semana = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday, Tuesday, Wednesday, Thursday, Friday -At '07:30'
 $semana.Repetition = (New-ScheduledTaskTrigger -Once -At '07:30' `

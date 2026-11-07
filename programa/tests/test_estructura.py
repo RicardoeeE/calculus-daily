@@ -1,6 +1,7 @@
 """Raiz minima: en la raiz solo lo de cada dia; el resto en programa/ y
 otras-opciones/. usuario/ y .cache siguen en la raiz."""
 import json
+import os
 import re
 import subprocess
 import sys
@@ -31,7 +32,7 @@ class TestRaizMinima(unittest.TestCase):
         self.assertEqual(rutas.PROGRAMA.name, "programa")
         self.assertTrue((rutas.PROGRAMA / "practica.py").exists())
         self.assertEqual(rutas.USUARIO, RAIZ / "usuario")
-        self.assertEqual(rutas.CACHE, RAIZ / ".cache")
+        self.assertEqual(rutas.CACHE, Path(os.environ.get("CALCULO_CACHE") or RAIZ / ".cache"))
         self.assertTrue((RAIZ / "Practicar.bat").exists())
 
     def test_en_la_raiz_solo_lo_permitido(self):
@@ -85,7 +86,8 @@ class TestRaizMinima(unittest.TestCase):
             "from calculo import datos, registro, servicio, sesion, tutela\n"
             "print(json.dumps([str(x) for x in (registro.RUTA, sesion.DIARIO, sesion.SIMULACROS, tutela.NOTAS,"
             " tutela.REVISIONES, datos.DATOS, servicio.CACHE, practica.CACHE)]))\n")
-        r = subprocess.run([sys.executable, "-B", "-c", codigo], cwd=rutas.PROGRAMA, capture_output=True,
+        entorno = {k: v for k, v in os.environ.items() if k != "CALCULO_CACHE"}   # las rutas de verdad
+        r = subprocess.run([sys.executable, "-B", "-c", codigo], cwd=rutas.PROGRAMA, capture_output=True, env=entorno,
                            text=True, encoding="utf-8", timeout=120)
         self.assertEqual(r.returncode, 0, r.stderr)
         for ruta in map(Path, json.loads(r.stdout)):

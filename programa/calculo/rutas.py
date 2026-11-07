@@ -9,13 +9,15 @@
 
 Nada de usuario/ ni de .cache vive dentro de programa/.
 """
+import os
 from pathlib import Path
 
 PROGRAMA = Path(__file__).resolve().parent.parent
 RAIZ = PROGRAMA.parent
 USUARIO = RAIZ / "usuario"
 DATOS = USUARIO / "datos"
-CACHE = RAIZ / ".cache"
+# CALCULO_CACHE: otra .cache (solo herramientas/pruebas.py, para no tocar la de verdad).
+CACHE = Path(os.environ.get("CALCULO_CACHE") or RAIZ / ".cache")
 VENV = RAIZ / ".venv"
 FICHAS = PROGRAMA / "fichas"
 INTERFAZ = PROGRAMA / "interfaz"
