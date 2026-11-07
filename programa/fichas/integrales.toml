@@ -445,7 +445,7 @@ tecnica = "partes"
 enunciado = "ln(x+1)"
 solucion = "(x+1) ln(x+1) - x"
 fuente = "Ejercicio tipo de calculo"
-pistas = ["No esta en la tabla.", "Partes con u = ln(x+1), dv = dx.", "du = dx/(x+1) y, si eliges v = x + 1, la integral que queda es ∫ 1 dx."]
+pistas = ["No está en la tabla.", "Partes con u = ln(x+1), dv = dx.", "du = dx/(x+1) y, si eliges v = x + 1, la integral que queda es ∫ 1 dx."]
 
 [[ficha]]
 id = "PA-ATAN"
@@ -454,7 +454,7 @@ tecnica = "partes"
 enunciado = "arctan(x)"
 solucion = "x arctan(x) - ln(1+x^2)/2"
 fuente = "Familia propia"
-pistas = ["Funcion sola que no esta en la tabla.", "Partes con u = arctan x, dv = dx.", "Queda ∫ x/(1+x^2) dx: es f'/f salvo constante."]
+pistas = ["Función sola que no está en la tabla.", "Partes con u = arctan x, dv = dx.", "Queda ∫ x/(1+x^2) dx: es f'/f salvo constante."]
 
 [[ficha]]
 id = "PA-X2EXP"

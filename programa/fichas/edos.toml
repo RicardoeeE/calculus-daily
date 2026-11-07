@@ -26,7 +26,7 @@ tecnica = "partes"
 enunciado = "e^(2x) cos(x)"
 solucion = "e^(2x)(2 cos(x) + sen(x))/5"
 fuente = "Ejercicio tipo de calculo (EDO lineal con forzamiento)"
-pistas = ["Exponencial por coseno: ninguna se simplifica al derivar.", "Partes dos veces; reaparece la integral original (partes ciclica).", "Llama I a la integral, aplica partes dos veces y despeja I."]
+pistas = ["Exponencial por coseno: ninguna se simplifica al derivar.", "Partes dos veces; reaparece la integral original (partes cíclica).", "Llama I a la integral, aplica partes dos veces y despeja I."]
 larga = true
 
 [[ficha]]

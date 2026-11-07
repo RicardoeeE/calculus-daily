@@ -55,7 +55,7 @@ limites = ["0", "oo"]
 solucion = "1/({s})^2"
 params = { s = [1, 2, 3, 4] }
 fuente = "Familia propia (Laplace: L{t} = 1/s^2)"
-pistas = ["Polinomio por exponencial, entre 0 e ∞.", "Partes con u = x, dv = e^(-({s})x) dx.", "Los terminos de borde dan 0; queda (1/({s}))∫ e^(-({s})x) dx."]
+pistas = ["Polinomio por exponencial, entre 0 e ∞.", "Partes con u = x, dv = e^(-({s})x) dx.", "Los términos de borde dan 0; queda (1/({s}))∫ e^(-({s})x) dx."]
 
 [[ficha]]
 id = "DF-LAPLACE-SEN"
@@ -67,7 +67,7 @@ solucion = "1/(({s})^2 + 1)"
 params = { s = [1, 2, 3] }
 derivados = { s2 = "({s})^2" }
 fuente = "Familia propia (Laplace: L{sen t} = 1/(s^2+1))"
-pistas = ["Exponencial por seno: partes ciclica.", "Haz partes dos veces y vuelve a aparecer la integral I.", "Despeja I de I = (algo) - I/{s2}."]
+pistas = ["Exponencial por seno: partes cíclica.", "Haz partes dos veces y vuelve a aparecer la integral I.", "Despeja I de I = (algo) - I/{s2}."]
 larga = true
 
 [[ficha]]
