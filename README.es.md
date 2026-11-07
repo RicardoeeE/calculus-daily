@@ -8,13 +8,13 @@ Práctica diaria de derivadas, integrales, derivadas parciales y EDOs: elige lo 
 
 [![Python 3.13](https://img.shields.io/badge/python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-green.svg)](LICENSE)
-[![Pruebas](https://img.shields.io/badge/pruebas-454%20en%20verde%20%C2%B7%203%20omitidas-brightgreen.svg)](README.md#tests)
+[![Pruebas](https://img.shields.io/badge/pruebas-485%20en%20verde%20%C2%B7%203%20omitidas-brightgreen.svg)](README.md#tests)
 [![Plataforma](https://img.shields.io/badge/plataforma-Windows%20(probado)-0078D6?logo=windows&logoColor=white)](#empezar)
 [![Sin conexión](https://img.shields.io/badge/sin%20conexi%C3%B3n-sin%20cuenta%20ni%20nube-555.svg)](README.md#engineering-highlights)
 
 [English](README.md) · [Notas de diseño (EN)](programa/docs/DESIGN.md) · por [Ricardo Eiras](https://github.com/RicardoeeE) — estudiante de Ingeniería Mecánica
 
-<img src="programa/docs/capturas/demo.gif" alt="Una sesión: ejemplo resuelto, confianza, vista previa «He leído», pistas, solución y una parcial corregida" width="760">
+<img src="programa/docs/capturas/demo.gif" alt="Una sesión: ejemplo resuelto, confianza, vista previa «He leído», pistas, solución, una parcial corregida y una lección guiada" width="760">
 
 </div>
 
@@ -30,9 +30,11 @@ Práctica diaria de derivadas, integrales, derivadas parciales y EDOs: elige lo 
 - 🎲 172 fichas de 25 técnicas, 87 de ellas con parámetros; todas las claves comprobadas con SymPy.
 - ✅ Corrección simbólica y por muestreo; avisos de `+C` y de `ln|x|`.
 - ✍️ Se escribe como en el papel (`e^2x/2 + C`, `x sen x`, `2±3i`) con vista previa en KaTeX.
+- 📖 Lecciones de 7 técnicas clave: teoría, forma tipo, errores típicos, 2-3 ejemplos y un ejemplo guiado con opciones que explican por qué están bien o mal.
 - 🪜 Tres pistas graduadas, solución paso a paso y ejemplos resueltos con huecos.
 - 📈 Dominio por técnica (Beta-Binomial), escalera de técnicas y repetición implícita.
-- 📝 Preparación de examen, simulacro cronometrado y prueba de nivel.
+- 📝 Con un examen cerca, un botón en la ventana da rondas extra solo de sus técnicas; simulacro cronometrado y prueba de nivel en la terminal.
+- 📐 Diseño de libro de matemáticas, claro y oscuro, que se adapta a cualquier ancho.
 - 🔒 Datos en JSON Lines que solo se amplían, con cerrojo, copias verificadas con SHA-256 y git.
 
 ## Empezar
@@ -63,7 +65,7 @@ Los detalles (nota objetiva, FSRS, dominio, grafo de técnicas, protección de d
 ## Pruebas
 
 ```bash
-.venv\Scripts\python.exe -B -m unittest discover -s programa/tests -t programa   # 457 pruebas (454 en verde, 3 omitidas)
+.venv\Scripts\python.exe programa\herramientas\pruebas.py                         # 488 pruebas (485 en verde, 3 omitidas), sin ventanas, unos 8 min
 .venv\Scripts\python.exe programa\practica.py ventana --prueba                   # humo de la ventana
 ```
 

@@ -8,13 +8,13 @@ A local practice app for derivatives, integrals, partial derivatives and ODEs: i
 
 [![Python 3.13](https://img.shields.io/badge/python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-454%20passing%20%C2%B7%203%20skipped-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-485%20passing%20%C2%B7%203%20skipped-brightgreen.svg)](#tests)
 [![Platform](https://img.shields.io/badge/platform-Windows%20(tested)-0078D6?logo=windows&logoColor=white)](#quick-start)
 [![Offline](https://img.shields.io/badge/offline-no%20account%2C%20no%20cloud-555.svg)](#engineering-highlights)
 
 [Español](README.es.md) · [Design notes](programa/docs/DESIGN.md) · by [Ricardo Eiras](https://github.com/RicardoeeE) — Mechanical Engineering student
 
-<img src="programa/docs/capturas/demo.gif" alt="A session: worked example, confidence, live 'I read' preview, hints, solution and a partial derivative checked" width="760">
+<img src="programa/docs/capturas/demo.gif" alt="A session: worked example, confidence, live 'I read' preview, hints, solution, a partial derivative checked and a guided lesson" width="760">
 
 </div>
 
@@ -33,16 +33,18 @@ A local practice app for derivatives, integrals, partial derivatives and ODEs: i
 | ✅ **Answer checking** | Integrals by differentiation, ODEs by substitution, everything by random-point sampling; `+C` and `ln|x|` warnings |
 | 🩺 **Mistake diagnosis** | Rule-based: factor, sign, chain/product rule, wrong variable, integrate vs. differentiate, wrong root signs |
 | ✍️ **Type like on paper** | `e^2x/2 + C`, `x sen x`, `2±3i`, `y = C1 e^x + C2 e^(3x)`; live KaTeX preview before checking |
+| 📖 **Guided lessons** | For 7 core techniques (product rule, integration by parts, characteristic equation, checking an ODE solution, Wronskian, particular solution, IVP): when to use it, how to spot it, standard form, steps and typical mistakes, 2–3 worked examples and a step-by-step guided example with 3 choices, each one explaining why it is right or wrong. Every computation is verified with SymPy |
 | 🪜 **Hints and faded examples** | 3 graded hints + full solution; worked examples lose a step each time you succeed |
 | 📈 **Mastery and ladder** | Beta-Binomial mastery per technique unlocks the next step; implicit repetition through a technique graph |
-| 📝 **Exam modes** | Exam-focused sessions, timed mock exams, adaptive placement test |
+| 📝 **Exam modes** | When an exam is close, a button in the window starts extra rounds of only its techniques (they don't use the daily cap); timed mock exams and an adaptive placement test in the terminal |
+| 📐 **Textbook layout** | Light and dark themes, text on the left, centred and numbered equations, one background, no shadows, five type sizes; works down to a 400 px wide window |
 | 🔒 **Your data, safe** | Append-only JSON Lines, file locks, fsync + re-read, SHA-256-verified backups, git sync |
 
 ## Quick start
 
 1. **Get it:** `git clone https://github.com/RicardoeeE/calculus-daily.git` (tested on Python 3.13; `doctor` accepts 3.11 or newer).
 2. **Run it:**
-   - **Windows:** double-click `Practicar.bat`. The first run creates a `.venv` and installs SymPy, FSRS and the window (about 3 min).
+   - **Windows:** double-click `Practicar.bat`. The first run creates a `.venv` and installs SymPy, FSRS and the window (about 3 min); after that the window opens straight away and the console closes at once. Optional: `programa\herramientas\crear-acceso.ps1` adds a Start-menu shortcut that opens the window with no console at all.
    - **Any OS:**
      ```bash
      python -m venv .venv
@@ -59,8 +61,10 @@ A local practice app for derivatives, integrals, partial derivatives and ODEs: i
 
 ## Screenshots
 
-| Worked example (partial fractions) | Partial derivative with hint 3 |
+| Lesson: integration by parts | Guided example, a wrong choice explained |
 |---|---|
+| <img src="programa/docs/capturas/ventana-leccion-teoria.png" alt="Lesson on integration by parts: when to use it, standard form and steps" width="420"> | <img src="programa/docs/capturas/ventana-leccion-guiado.png" alt="Guided example with three choices; the chosen wrong one explains why" width="420"> |
+| **Worked example (partial fractions)** | **Partial derivative with hint 3** |
 | <img src="programa/docs/capturas/ventana-ejemplo-racionales.png" alt="Worked example of partial fractions rendered with KaTeX" width="420"> | <img src="programa/docs/capturas/ventana-parcial-pista3.png" alt="Partial derivative exercise showing three graded hints" width="420"> |
 | **Solution after two hints** | **Live "I read" preview** |
 | <img src="programa/docs/capturas/ventana-integral-solucion.png" alt="Integral exercise with the step-by-step solution" width="420"> | <img src="programa/docs/capturas/ventana-vista-previa.png" alt="Answer typed in class notation with its KaTeX preview" width="420"> |
@@ -108,9 +112,9 @@ calculus-daily/
 └── programa/
     ├── practica.py        ← CLI entry point (hoy, ventana, informe, doctor, examen, simulacro…)
     ├── calculo/           ← engine: reader, checker, diagnosis, FSRS planner, service layer, window
-    ├── fichas/            ← exercise cards (TOML), worked examples, technique graph, exam calendar
+    ├── fichas/            ← exercise cards (TOML), worked examples, lessons, technique graph, exam calendar
     ├── interfaz/          ← window UI (HTML/CSS/JS) + KaTeX 0.19.1 (MIT)
-    ├── herramientas/      ← daily reminder (Windows task), screenshot tool
+    ├── herramientas/      ← daily reminder (Windows task), Start-menu shortcut, background test runner, screenshot tool
     ├── tests/             ← unittest suite
     └── docs/              ← design notes, cheat sheet, screenshots
 ```
@@ -118,11 +122,14 @@ calculus-daily/
 ## Tests
 
 ```bash
-.venv/bin/python -B -m unittest discover -s programa/tests -t programa     # 457 tests (454 pass, 3 skipped), about 12 min
+.venv/bin/python programa/herramientas/pruebas.py                          # 488 tests (485 pass, 3 skipped), about 8 min
+.venv/bin/python -B -m unittest discover -s programa/tests -t programa     # the same suite with plain unittest
 .venv/bin/python programa/practica.py ventana --prueba                     # smoke test: opens the window with temp data and closes itself
 ```
 
-The suite covers the reader and checker (a 34-integral battery with equivalent and wrong forms), every card and worked example, FSRS simulations of 100 days with skipped days, concurrent writers, git sync between two clones, and the window API.
+`pruebas.py` runs the suite in the background: on Windows no test opens a console window, and it uses a temporary `.cache`, so the warnings the tests provoke on purpose never reach your real log.
+
+The suite covers the reader and checker (a 34-integral battery with equivalent and wrong forms), every card and worked example, FSRS simulations of 100 days with skipped days, every computation of the lessons (with SymPy), concurrent writers, git sync between two clones, and the window API.
 
 ## Adding exercises
 
@@ -131,7 +138,8 @@ Cards live in `programa/fichas/*.toml`. Each needs an `id`, `tipo`, `tecnica`, `
 ## Roadmap
 
 - [ ] Resume a half-finished exercise inside the window (today the queue resumes; hints and failed checks are kept).
-- [ ] Mock exam and placement test inside the window (terminal only for now).
+- [ ] Mock exam and placement test inside the window (exam practice is already there; these two are terminal only for now).
+- [ ] Lessons for the other 18 techniques (today they have a worked example).
 - [ ] Personal FSRS parameters once there are enough reviews (calibration is already reported).
 - [ ] English interface.
 

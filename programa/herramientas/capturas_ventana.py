@@ -7,7 +7,8 @@ una cola fija y la recorre sola para fotografiar los estados con formulas:
   2. la confianza y la vista previa «He leido» de una respuesta;
   3. una integral con la solucion visible (R-DOS, tras pistas 1 y 2);
   4. el ejemplo de la tecnica «constante» (si toca), una parcial con la pista 3
-     y la misma parcial ya comprobada.
+     y la misma parcial ya comprobada;
+  5. la leccion de integracion por partes: la teoria y un paso del ejemplo guiado.
 
 Ademas copia cada foto, numerada, en CARPETA/fotogramas (los fotogramas del GIF).
 Nunca toca usuario/datos ni sube nada (git=False). Uso, desde la raiz del repo:
@@ -31,7 +32,8 @@ from calculo import registro, servicio, ventana  # noqa: E402
 from calculo.fichas import cargar  # noqa: E402
 
 COLA = [{"ficha": "R-DOS", "semilla": 1, "motivo": "nueva"},
-        {"ficha": "PC-POLI-X", "semilla": 1, "motivo": "nueva"}]
+        {"ficha": "PC-POLI-X", "semilla": 1, "motivo": "nueva"},
+        {"ficha": "PA-XEXP", "semilla": 1, "motivo": "nueva"}]
 
 
 def main(carpeta):
@@ -129,6 +131,19 @@ def main(carpeta):
             esperar(f"{fase} !== 'respuesta'")
             js("window.scrollTo(0, 0)")
             foto("parcial-correcta")
+            if js(fase) == "causa":
+                js("document.dispatchEvent(new KeyboardEvent('keydown', {key: '1', bubbles: true}))")
+            esperar(f"{fase} === 'hecho'")
+            js("document.getElementById('siguiente').click()")
+            esperar(f"{fase} === 'leccion'")
+            foto("leccion-teoria")
+            for _ in (1, 2):
+                js("document.getElementById('leccion-siguiente').click()")
+                time.sleep(0.3)
+            esperar("document.querySelectorAll('#leccion-cuerpo button.opcion').length > 0")
+            js("document.querySelector('#leccion-cuerpo button.opcion[data-correcta=\"\"]').click()")
+            esperar("document.querySelector('.opcion-nota').textContent.length > 0")
+            foto("leccion-guiado")
         except Exception as exc:
             error.append(repr(exc))
         finally:

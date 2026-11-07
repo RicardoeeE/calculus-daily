@@ -16,10 +16,11 @@ You solve on paper. The program decides what is due today, checks the result obj
 ## 2. A session
 
 1. **Queue.** 5 exercises (2 on a "minimum day"): 1 algebra warm-up, then partial derivatives/ODEs, derivatives and integrals. Overdue reviews always get a seat; backlog after missed days is spread over several days, most urgent first. The session starts with the exercise most likely to go well.
-2. **Confidence.** Before answering, the student rates confidence 1–5 (used for calibration, never for the grade).
-3. **Answer.** Only the final result, in the notation used in class: `e^2x/2 + C`, `sen x cos x`, `ln|x-3|`, `2±3i`, `y = C1 e^x + C2 e^(3x)`. The window shows a neutral "I read: …" preview rendered with KaTeX before checking.
-4. **Help.** Three graded hints (shape → technique → first step), then the worked solution. "I don't know where to start" shows the worked example of the technique and counts as hint 2.
-5. **Close.** A short feeling score and an optional comment; the day's block is written to the diary and the data is committed.
+2. **Lesson (first time only).** For 7 core techniques, the first time one comes up without a success (or after failing it) a short lesson opens before the exercise: theory, 2–3 worked examples and a guided example (see 4.7). "Go straight to the exercise" skips it, and "See theory" opens it again during the exercise.
+3. **Confidence.** Before answering, the student rates confidence 1–5 (used for calibration, never for the grade).
+4. **Answer.** Only the final result, in the notation used in class: `e^2x/2 + C`, `sen x cos x`, `ln|x-3|`, `2±3i`, `y = C1 e^x + C2 e^(3x)`. The window shows a neutral "I read: …" preview rendered with KaTeX before checking.
+5. **Help.** Three graded hints (shape → technique → first step), then the worked solution. "I don't know where to start" shows the worked example of the technique and counts as hint 2.
+6. **Close.** A short feeling score and an optional comment; the day's block is written to the diary and the data is committed.
 
 ## 3. Checking answers
 
@@ -58,13 +59,28 @@ Each technique (substitution, parts, partial fractions...) has a success rate p 
 
 ### 4.5 Exams, placement test, mock exams
 
-- `fichas/calendario.toml` opens an exam's techniques some days before it, even if the ladder has not reached them. `examen` runs an extra session with only those techniques (weakest first, interleaved).
+- `fichas/calendario.toml` opens an exam's techniques some days before it, even if the ladder has not reached them. While an exam is that close, the first new card of each group is one of its techniques: the least seen one and, on a tie, the lowest step. In a 100-day simulation (6 seeds × 2 scenarios) this raised the techniques practised before a 7-technique exam from 2 to 6, with the same daily load.
+- Exam practice runs in the window: a "Preparar …" button between exercises starts 5 extra exercises of only that exam's techniques (weakest first, interleaved), recorded with the reason `examen` and outside the daily cap; the same button goes back to today's session. `practica.py examen` does the same in the terminal.
 - The placement test is adaptive and derived from the log: per group it climbs the ladder while the student answers without hints and stops at the first failure.
 - `simulacro` is a timed mock exam: no hints and no feedback until the end; the time limit is checked in Python.
 
 ### 4.6 Worked examples with gaps (fading)
 
 The first time a technique appears, a fully worked example is shown. After 1 success, one step is hidden ("Step 3: ____"), after 2 successes two steps, and from 3 successes no example. After a failure, the full example comes back.
+
+### 4.7 Lessons
+
+`fichas/lecciones.toml` holds one lesson per core technique, in three parts:
+
+- **Theory:** what it is for, how to recognise it, the standard form, how to apply it and typical mistakes.
+- **Examples:** 2 or 3 fully worked.
+- **Guided:** the student solves one step by step, choosing among 3 options. Every option explains why it is right or wrong, and the next step only opens after the right one. It is not graded or logged.
+
+`tests/test_lecciones.py` checks every computation of the examples and the guided steps with SymPy, that each step has exactly one right option (not always in the same place), and that every formula converts to LaTeX.
+
+### 4.8 Focus group
+
+While the partial-derivatives group (partials, exact ODEs, higher-order ODEs) has never been mastered, it gets 2 of the 5 daily seats. The focus switches off once every technique of steps 1–4 of that group has been mastered at some point. During the focus, algebra and derivatives take turns: if the last practised day had no derivative, today's algebra seat goes to one. A 100-day simulation showed derivatives otherwise almost never came up (1 of 19 cards seen).
 
 ## 5. Data safety
 
@@ -83,6 +99,8 @@ The data files (`usuario/datos/*.jsonl`) only grow, one line per fact. "Losing d
 
 - **Service layer** (`calculo/servicio.py`, class `Sesion`): the session logic without `input()` or `print`. Everything that matters lives on disk (log and `.cache` under lock), so the window, the terminal and the JSON commands can pick up the same session. Every public method returns a JSON-serialisable dict with `ok`; exceptions become `{ok: False, error}` and go to a log.
 - **Window** (`calculo/ventana.py` + `interfaz/`): pywebview with the system WebView2, KaTeX 0.19.1 bundled locally (no network, strict CSP, `trust: false`, text via `textContent`, never `innerHTML`). A custom converter turns class notation into LaTeX *as written* (SymPy's printer reorders `3(x-2)` into `3x - 6`, which would give away the answer). Single instance, launched with `pythonw` so no console stays open; if the window cannot open, exit code 3 and the terminal takes over.
+- **Design:** the window is laid out like a maths textbook: text on the left, centred and numbered equations, a discreet page header, a single background with no shadows or cards, and only five type sizes. Light and dark follow the system. The layout adapts to any width (tested at 420 px, no horizontal scroll; the window can shrink to 400 px). Focus never lands on the first option of a choice, so an extra Enter cannot pick "no idea"; the footer shows only the keys of the current screen.
+- **Launch:** with the environment ready, `Practicar.bat` opens the window with `pythonw` directly and its console closes in about 60 ms; if the window does not open, it relaunches itself on the full path (checks, reinstall, terminal). The reminder task runs PowerShell through `conhost --headless`, so no console flashes.
 - **Terminal** (`practica.py hoy`): the same session, keyboard only.
 - **JSON / reviewer mode**: `cola`, `comprobar`, `pista`, `registrar`, `pendientes`, `resolver` let a script or a person run a session step by step. Students can flag "my answer was right" (a claim): it is graded 2 provisionally and listed in `pendientes` until someone resolves it.
 
